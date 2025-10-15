@@ -1,0 +1,116 @@
+==============================================
+             🧭 GUIA DO GIT 
+==============================================
+
+📌 ESTE ARQUIVO É UM PASSO A PASSO PARA USAR O GIT E O GITHUB
+Coloca-o na raiz do projeto e segue as etapas abaixo 👇
+
+
+==============================================
+1️⃣ INSTALAÇÃO E CONFIGURAÇÃO INICIAL (apenas 1x)
+==============================================
+1. Instalar o Git:
+   https://git-scm.com/downloads
+
+2. Verificar se está instalado:
+   git --version
+
+3. Configurar nome e email (necessário para commits):
+   git config --global user.name "Seu Nome"
+   git config --global user.email "seuemail@exemplo.com"
+
+
+==============================================
+2️⃣ CLONAR O REPOSITÓRIO DO GITHUB
+==============================================
+1. Pegar o link HTTPS do repositório no GitHub.
+2. No terminal ou Git Bash:
+   git clone https://github.com/usuario/nome-do-repositorio.git
+3. Entrar na pasta:
+   cd nome-do-repositorio
+4. Abrir no VS Code:
+   code .
+
+
+==============================================
+3️⃣ ANTES DE COMEÇAR A EDITAR
+==============================================
+Sempre puxar as últimas mudanças:
+   git pull
+
+
+==============================================
+4️⃣ FAZER ALTERAÇÕES
+==============================================
+Editar os arquivos no VS Code normalmente e salvar.
+
+
+==============================================
+5️⃣ VERIFICAR O QUE MUDOU
+==============================================
+   git status
+
+
+==============================================
+6️⃣ ADICIONAR AS MUDANÇAS AO COMMIT
+==============================================
+Adicionar tudo:
+   git add .
+
+Ou adicionar arquivos específicos:
+   git add nome-do-arquivo.ext
+
+
+==============================================
+7️⃣ FAZER O COMMIT
+==============================================
+   git commit -m "Mensagem explicando o que foi feito"
+
+Exemplo:
+   git commit -m "Corrige bug no login e atualiza layout"
+
+
+==============================================
+8️⃣ ENVIAR PARA O GITHUB
+==============================================
+   git push
+
+Se for o primeiro push no PC:
+   git push -u origin main
+
+
+==============================================
+9️⃣ REGRAS DE OURO DA EQUIPE
+==============================================
+✅ Sempre fazer "git pull" antes de começar.
+✅ Escrever mensagens de commit curtas e claras.
+✅ Não editar o mesmo ficheiro que outra pessoa ao mesmo tempo.
+✅ Testar o código antes de fazer push.
+✅ Se algo der errado: 
+   - Verifica o estado com "git status"
+   - Consulta histórico com "git log"
+
+
+==============================================
+🔟 OPCIONAL - USAR O SCRIPT AUTOMÁTICO
+==============================================
+Arquivo: git_team_push.bat
+→ Dá duplo clique.
+→ Ele faz automaticamente:
+   - git pull
+   - git add .
+   - git commit -m "mensagem"
+   - git push
+
+
+==============================================
+💡 RESUMO RÁPIDO (os 4 comandos principais)
+==============================================
+git pull
+git add .
+git commit -m "mensagem"
+git push
+
+==============================================
+FIM ✅
+==============================================

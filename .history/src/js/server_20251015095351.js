@@ -1,0 +1,2 @@
+// coneção com bd 
+con

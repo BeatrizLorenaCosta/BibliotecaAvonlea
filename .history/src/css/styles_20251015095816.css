@@ -1,0 +1,252 @@
+/* =====================
+   Variáveis globais
+===================== */
+:root {
+    --bg:      #f6f8fb;
+    --primary: #2067ED;
+    --muted:   #6b7280;
+    --card:    #ffffff;
+    --success: #10b981;
+    --danger:  #ef4444;
+    --radius:  10px;
+    --max-w:   1100px;
+}
+
+/* =====================
+   Reset / Base
+===================== */
+* {
+    box-sizing: border-box;
+}
+main {
+    margin: 50px;
+}
+body {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin: 0;
+    background: var(--bg);
+    color: #111827;
+}
+
+.container {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* =====================
+   Header
+===================== */
+header {
+    background: linear-gradient(90deg, var(--primary), #1a56d6);
+    color: white;
+    padding: 20px 0;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+header h1 {
+    font-weight: 600;
+    margin: 0;
+}
+
+/* =====================
+   Navegação
+===================== */
+.nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform 0.15s ease; /* suaviza a animação */
+   
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    transform: scale(1.1); /* aumenta 10% quando clica */
+    
+}
+
+/* =====================
+   Seções
+===================== */
+.section {
+    background: var(--card);
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.hidden {
+    display: none;
+}
+
+    #login{
+        height: 50px;
+        width: 50px;
+        background-image: url("../s/login.png");
+        background-size: cover;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background-color: transparent;
+        margin-left: 30px;
+        border-radius: 50%;
+
+    }
+    #login:hover{
+        cursor: pointer;
+        filter: brightness(.9);
+           }
+/* =====================
+   Formulários
+===================== */
+form {
+    margin-bottom: 16px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.form-grid .checkbox {
+    align-items: center;
+    flex-direction: row;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #e6e9ef;
+    border-radius: 8px;
+    background: transparent;
+}
+
+textarea {
+    min-height: 80px;
+}
+
+/* =====================
+   Ações do formulário
+===================== */
+.form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.submit-btn {
+    background: var(--primary);
+    color: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.reset-btn {
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    padding: 10px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    filter: brightness(.95);
+}
+
+/* =====================
+   Tabelas
+===================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+thead th {
+    background: #f8fafc;
+    padding: 10px;
+    text-align: left;
+    font-size: 13px;
+    color: var(--muted);
+}
+
+tbody td {
+    padding: 12px;
+    border-top: 1px solid #eef2f7;
+}
+
+tr:hover td {
+    background: linear-gradient(90deg, rgba(32, 103, 237, 0.03), transparent);
+}
+
+/* =====================
+   Botões de ação
+===================== */
+.actions button {
+    margin-right: 6px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.actions .edit {
+    background: #f59e0b;
+    color: white;
+}
+
+.actions .delete {
+    background: var(--danger);
+    color: white;
+}
+
+/* =====================
+   Responsividade
+===================== */
+@media (max-width: 800px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 6px;
+    }
+}
+    

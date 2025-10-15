@@ -44,7 +44,6 @@ app.delete('/livros/:id', function (req, res) {
 app.listen(3000, () => console.log('ligado a porto 3000'));
 
 
-/* atualizar para funcionar com bd*/
 
 // Modernized script: fetch + async/await, event listeners, centralized handlers
 

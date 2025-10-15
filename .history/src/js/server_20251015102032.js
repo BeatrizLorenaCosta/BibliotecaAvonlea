@@ -1,16 +1,4 @@
-// Mysql connection and API routes
-const express = require('express');
-const mysql = require('mysql2');
-const app = express();
-app.use(express.json());
 
-// ligação a BD
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'biblio',
-    password: '12345',
-    database: 'biblioteca'
-});
 
 db.connect(() => {
     console.log('Ligado a bd');

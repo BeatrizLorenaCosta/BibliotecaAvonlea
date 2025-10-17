@@ -1,0 +1,183 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('.nav-btn');
+    sections.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(btn.dataset.section).classList.remove('hidden');
+            carregarDados(btn.dataset.section);
+        });
+    });
+
+    carregarSelects(); // Carrega autores e categorias nos selects
+});
+
+// Função genérica para carregar dados
+function carregarDados(tipo) {
+    fetch(`http://localhost:3000/api/${tipo}`)
+        .then(res => res.json())
+        .then(dados => preencherTabela(tipo, dados));
+}
+
+let autores = [];
+let categorias = [];
+
+function carregarSelects() {
+    fetch('http://localhost:3000/api/autores')
+        .then(res => res.json())
+        .then(data => {
+            autores = data;
+            const selectAutor = document.getElementById('autor_id');
+            selectAutor.innerHTML = '';
+            data.forEach(autor => {
+                const option = document.createElement('option');
+                option.value = autor.id_autor;
+                option.textContent = autor.nome_autor;
+                selectAutor.appendChild(option);
+            });
+        });
+
+    fetch('http://localhost:3000/api/categorias')
+        .then(res => res.json())
+        .then(data => {
+            categorias = data;
+            const selectCategoria = document.getElementById('categoria_id');
+            selectCategoria.innerHTML = '';
+            data.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id_categoria;
+                option.textContent = cat.nome_categoria;
+                selectCategoria.appendChild(option);
+            });
+        });
+}
+
+// Preencher tabela
+
+function preencherTabela(tipo, dados) {
+    const tbody = document.querySelector(`#tabela-${tipo} tbody`);
+    tbody.innerHTML = '';
+
+    dados.forEach(item => {
+        const tr = document.createElement('tr');
+
+        if (tipo === 'livros') {
+            const autor = autores.find(a => a.id_autor === item.autor_id);
+            const categoria = categorias.find(c => c.id_categoria === item.categoria_id);
+            console.log("Autor:", autor, "Categoria:", categoria, au autor_id, categoria_id);
+            tr.innerHTML = `
+                <td>${item.titulo}</td>
+                <td>${autor ? autor.nome_autor : 'Desconhecido'}</td>
+                <td>${categoria ? categoria.nome_categoria : 'Desconhecida'}</td>
+                <td>${item.ano}</td>
+                <td>${item.disponivel ? 'Sim' : 'Não'}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editar('${tipo}', ${item.id})">Editar</button>
+                    <button class="delete" onclick="deletar('${tipo}', ${item.id})">Excluir</button>
+                </td>
+            `;
+        } else {
+            Object.values(item).forEach(valor => {
+                const td = document.createElement('td');
+                td.textContent = valor;
+                tr.appendChild(td);
+            });
+
+            const tdAcoes = document.createElement('td');
+            tdAcoes.classList.add('actions');
+            tdAcoes.innerHTML = `
+                <button class="edit" onclick="editar('${tipo}', ${item.id})">Editar</button>
+                <button class="delete" onclick="deletar('${tipo}', ${item.id})">Excluir</button>
+            `;
+            tr.appendChild(tdAcoes);
+        }
+
+        tbody.appendChild(tr);
+    });
+}
+
+
+// Adicionar ou atualizar
+function adicionarOuAtualizar(tipo) {
+    const form = document.getElementById(`form-${tipo}`);
+    const dados = {};
+    form.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type === 'checkbox') {
+            dados[el.id.split('-')[1]] = el.checked;
+        } else {
+            dados[el.id.split('-')[1]] = el.value;
+        }
+    });
+
+    fetch(`http://localhost:3000/api/${tipo}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    })
+    .then(res => res.text())
+    .then(msg => {
+        alert(msg);
+        form.reset();
+        carregarDados(tipo);
+    });
+}
+
+// Editar
+function editar(tipo, id) {
+    fetch(`http://localhost:3000/api/${tipo}`)
+        .then(res => res.json())
+        .then(dados => {
+            const item = dados.find(el => el.id === id);
+            const form = document.getElementById(`form-${tipo}`);
+            form.querySelectorAll('input, select, textarea').forEach(el => {
+                const campo = el.id.split('-')[1];
+                if (el.type === 'checkbox') {
+                    el.checked = item[campo];
+                } else {
+                    el.value = item[campo];
+                }
+            });
+        });
+}
+
+// Deletar
+function deletar(tipo, id) {
+    if (confirm('Tem certeza que deseja excluir?')) {
+        fetch(`http://localhost:3000/api/${tipo}/${id}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.text())
+        .then(msg => {
+            alert(msg);
+            carregarDados(tipo);
+        });
+    }
+}
+
+// Carregar autores e categorias nos selects
+function carregarSelects() {
+    fetch('http://localhost:3000/api/autores')
+        .then(res => res.json())
+        .then(autores => {
+            const selectAutor = document.getElementById('livro-autor_id');
+            selectAutor.innerHTML = '';
+            autores.forEach(autor => {
+                const option = document.createElement('option');
+                option.value = autor.id;
+                option.textContent = autor.nome;
+                selectAutor.appendChild(option);
+            });
+        });
+
+    fetch('http://localhost:3000/api/categorias')
+        .then(res => res.json())
+        .then(categorias => {
+            const selectCategoria = document.getElementById('livro-categoria_id');
+            selectCategoria.innerHTML = '';
+            categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.nome;
+                selectCategoria.appendChild(option);
+            });
+        });
+}

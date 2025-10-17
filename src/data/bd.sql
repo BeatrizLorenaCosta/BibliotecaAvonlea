@@ -59,3 +59,39 @@ CREATE TABLE avaliacoes (
     FOREIGN KEY (livro_id) REFERENCES livros(id_livro),
     FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador)
 );
+
+INSERT INTO autores (nome_autor, nacionalidade, data_nascimento)
+VALUES 
+('Machado de Assis', 'Brasileiro', '1839-06-21'),
+('Eça de Queirós', 'Português', '1845-11-25'),
+('José Saramago', 'Português', '1922-11-16');
+
+INSERT INTO categorias (nome_categoria, descricao)
+VALUES 
+('Romance', 'Narrativas longas com desenvolvimento de personagens'),
+('Realismo', 'Movimento literário que retrata a realidade'),
+('Ficção Científica', 'Histórias com elementos científicos e tecnológicos');
+
+INSERT INTO utilizadores (nome_utilizador, email, tipo)
+VALUES 
+('Ana Silva', 'ana.silva@email.com', 'aluno'),
+('Carlos Mendes', 'carlos.mendes@email.com', 'professor'),
+('Joana Costa', 'joana.costa@email.com', 'outro');
+
+INSERT INTO livros (titulo, autor_id, categoria_id, ano, disponivel)
+VALUES 
+('Dom Casmurro', 1, 1, 1899, true),
+('O Primo Basílio', 2, 2, 1878, true),
+('Memórias Póstumas de Brás Cubas', 1, 1, 1881, false);
+
+INSERT INTO emprestimos (livro_id, utilizador_id, data_emprestimo, data_devolucao)
+VALUES 
+(1, 1, '2025-10-01', '2025-10-15'),
+(2, 2, '2025-10-05', NULL);
+
+INSERT INTO avaliacoes (livro_id, utilizador_id, comentario, classificacao)
+VALUES 
+(1, 1, 'Excelente leitura, muito profundo.', 5),
+(2, 2, 'Interessante, mas um pouco lento.', 3),
+(3, 3, 'Obra-prima da literatura brasileira.', 5);
+

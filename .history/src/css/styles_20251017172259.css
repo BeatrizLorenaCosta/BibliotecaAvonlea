@@ -242,12 +242,7 @@ tr:hover td {
 }
 
 .submit-btn {
-    background: var(--primary);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
+    
 }
 
 /* =====================

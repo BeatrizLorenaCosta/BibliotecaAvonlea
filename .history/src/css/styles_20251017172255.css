@@ -241,14 +241,7 @@ tr:hover td {
     filter: brightness(0.9);
 }
 
-.submit-btn {
-    background: var(--primary);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-}
+.submit-btn 
 
 /* =====================
    Responsividade

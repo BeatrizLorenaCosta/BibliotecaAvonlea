@@ -105,7 +105,7 @@
                 <label>Utilizador ID: <input type="number" id="emprestimo-utilizador_id" required></label>
                 <label>Data Empréstimo: <input type="date" id="emprestimo-data_emprestimo" required></label>
                 <label>Data Devolução: <input type="date" id="emprestimo-data_devolucao"></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
+                <button  onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-emprestimos">
                 <thead><tr><th>Livro</th><th>Utilizador</th><th>Data Empréstimo</th><th>Data Devolução</th><th>Ações</th></tr></thead>
@@ -122,7 +122,7 @@
                 <label>Utilizador ID: <input type="number" id="avaliacao-utilizador_id" required></label>
                 <label>Comentário: <textarea id="avaliacao-comentario"></textarea></label>
                 <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5" required></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
+                <button onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-avaliacoes">
                 <thead><tr><th>Livro</th><th>Utilizador</th><th>Comentário</th><th>Classificação</th><th>Ações</th></tr></thead>

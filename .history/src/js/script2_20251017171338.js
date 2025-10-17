@@ -8,14 +8,6 @@ let avaliacoes = [];
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    carregarDados('autores');
-    carregarDados('categorias');
-    carregarDados('livros');
-    carregarDados('utilizadores');
-    carregarDados('emprestimos');
-    carregarDados('avaliacoes');
-
     const sections = document.querySelectorAll('.nav-btn');
     sections.forEach(btn => {
         btn.addEventListener('click', () => {

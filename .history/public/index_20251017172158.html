@@ -41,7 +41,7 @@
                 <label>Categoria: <select id="livro-categoria_id" required></select></label>
                 <label>Ano: <input type="number" id="livro-ano" required></label>
                 <label>Disponível: <input type="checkbox" id="livro-disponivel"></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('livros')">Adicionar/Atualizar</button>
+                <button cle onclick="adicionarOuAtualizar('livros')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-livros">
                 <thead><tr><th>Título</th><th>Autor</th><th>Categoria</th><th>Ano</th><th>Disponível</th><th>Ações</th></tr></thead>
@@ -57,7 +57,7 @@
                 <label>Nome: <input type="text" id="autor-nome" required></label>
                 <label>Nacionalidade: <input type="text" id="autor-nacionalidade"></label>
                 <label>Data Nascimento: <input type="date" id="autor-data_nascimento"></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('autores')">Adicionar/Atualizar</button>
+                <button onclick="adicionarOuAtualizar('autores')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-autores">
                 <thead><tr><th>Nome</th><th>Nacionalidade</th><th>Data Nascimento</th><th>Ações</th></tr></thead>
@@ -72,7 +72,7 @@
                 <input type="hidden" id="categoria-id">
                 <label>Nome: <input type="text" id="categoria-nome" required></label>
                 <label>Descrição: <input type="text" id="categoria-descricao"></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('categorias')">Adicionar/Atualizar</button>
+                <button onclick="adicionarOuAtualizar('categorias')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-categorias">
                 <thead><tr><th>Nome</th><th>Descrição</th><th>Ações</th></tr></thead>
@@ -88,7 +88,7 @@
                 <label>Nome: <input type="text" id="utilizador-nome" required></label>
                 <label>Email: <input type="email" id="utilizador-email" required></label>
                 <label>Tipo: <select id="utilizador-tipo"><option value="aluno">Aluno</option><option value="professor">Professor</option><option value="outro">Outro</option></select></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('utilizadores')">Adicionar/Atualizar</button>
+                <button onclick="adicionarOuAtualizar('utilizadores')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-utilizadores">
                 <thead><tr><th>Nome</th><th>Email</th><th>Tipo</th><th>Ações</th></tr></thead>
@@ -105,7 +105,7 @@
                 <label>Utilizador ID: <input type="number" id="emprestimo-utilizador_id" required></label>
                 <label>Data Empréstimo: <input type="date" id="emprestimo-data_emprestimo" required></label>
                 <label>Data Devolução: <input type="date" id="emprestimo-data_devolucao"></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
+                <button onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-emprestimos">
                 <thead><tr><th>Livro</th><th>Utilizador</th><th>Data Empréstimo</th><th>Data Devolução</th><th>Ações</th></tr></thead>
@@ -122,7 +122,7 @@
                 <label>Utilizador ID: <input type="number" id="avaliacao-utilizador_id" required></label>
                 <label>Comentário: <textarea id="avaliacao-comentario"></textarea></label>
                 <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5" required></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
+                <button onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
             </form>
             <table id="tabela-avaliacoes">
                 <thead><tr><th>Livro</th><th>Utilizador</th><th>Comentário</th><th>Classificação</th><th>Ações</th></tr></thead>

@@ -68,9 +68,6 @@ function carregarDados(tipo) {
                 if (!document.getElementById('emprestimos').classList.contains('hidden')) {
                     preencherTabela(tipo, dados);
                 }
-                if (!document.getElementById('avaliacoes').classList.contains('hidden')) {
-                    preencherTabela(tipo, dados);
-                }
             } else if (tipo === 'emprestimos') {
                 emprestimos = dados;
                 preencherTabela(tipo, dados);

@@ -57,18 +57,14 @@ function carregarDados(tipo) {
                 if (!document.getElementById('emprestimos').classList.contains('hidden')) {
                     preencherTabela(tipo, dados);
                 }
-                if (!document.getElementById('avaliacoes').classList.contains('hidden')) {
+                if (!document.getElementById('emprestimos').classList.contains('hidden')) {
                     preencherTabela(tipo, dados);
                 }
                 
             } else if (tipo === 'utilizadores') {
                 utilizadores = dados;
                 preencherSelect('emprestimo-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
-                preencherSelect('avaliacao-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
                 if (!document.getElementById('emprestimos').classList.contains('hidden')) {
-                    preencherTabela(tipo, dados);
-                }
-                if (!document.getElementById('avaliacoes').classList.contains('hidden')) {
                     preencherTabela(tipo, dados);
                 }
             } else if (tipo === 'emprestimos') {
@@ -76,6 +72,8 @@ function carregarDados(tipo) {
                 preencherTabela(tipo, dados);
             } else if (tipo === 'avaliacoes') {
                 avaliacoes = dados;
+                
+                preencherSelect('avaliacao-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
                 preencherTabela(tipo, dados);
             }
         });

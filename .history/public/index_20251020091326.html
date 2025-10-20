@@ -101,8 +101,8 @@
             <h2>Empréstimos</h2>
             <form id="form-emprestimos" onsubmit="return false;">
                 <input type="hidden" id="emprestimo-id">
-                <label>Livro: <select id="emprestimo-livro_id" required></select></label>
-                <label>Utilizador: <select id="emprestimo-utilizador_id" required></select></label>
+                <label>Livro ID:<select id="emprestimo-livro_id" required></select></label>
+                <label>Utilizador ID: <input type="number" id="emprestimo-utilizador_id" required></label>
                 <label>Data Empréstimo: <input type="date" id="emprestimo-data_emprestimo" required></label>
                 <label>Data Devolução: <input type="date" id="emprestimo-data_devolucao"></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
@@ -118,8 +118,8 @@
             <h2>Avaliações</h2>
             <form id="form-avaliacoes" onsubmit="return false;">
                 <input type="hidden" id="avaliacao-id">
-                <label>Livro: <select id="avaliacao-livro_id" required></select></label>
-                <label>Utilizador: <select id="avaliacao-utilizador_id" required></select></label>
+                <label>Livro ID: <input type="number" id="avaliacao-livro_id" required></label>
+                <label>Utilizador ID: <input type="number" id="avaliacao-utilizador_id" required></label>
                 <label>Comentário: <textarea id="avaliacao-comentario"></textarea></label>
                 <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5" required></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>

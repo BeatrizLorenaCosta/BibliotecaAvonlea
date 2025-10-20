@@ -8,6 +8,7 @@ let avaliacoes = [];
 
 
 document.addEventListener('DOMContentLoaded', () => {
+
     carregarDados('autores');
     carregarDados('categorias');
     carregarDados('livros');
@@ -52,26 +53,12 @@ function carregarDados(tipo) {
                 }
             } else if (tipo === 'livros') {
                 livros = dados;
-                preencherSelect('emprestimo-livro_id', livros, 'id_livro', 'titulo');
-                preencherSelect('avaliacao-livro_id', livros, 'id_livro', 'titulo');
-                if (!document.getElementById('emprestimos').classList.contains('hidden')) {
-                    preencherTabela(tipo, dados);
-                }
-                if (!document.getElementById('avaliacoes').classList.contains('hidden')) {
-                    preencherTabela(tipo, dados);
-                }
-                
+                preencherTabela(tipo, dados);
             } else if (tipo === 'utilizadores') {
                 utilizadores = dados;
-                preencherSelect('emprestimo-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
-                preencherSelect('avaliacao-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
-                if (!document.getElementById('emprestimos').classList.contains('hidden')) {
-                    preencherTabela(tipo, dados);
-                }
-                if (!document.getElementById('avaliacoes').classList.contains('hidden')) {
-                    preencherTabela(tipo, dados);
-                }
+                preencherTabela(tipo, dados);
             } else if (tipo === 'emprestimos') {
+                preencherSelect('emprestimo-livro_id', livros, 'id_livro', 'titulo');
                 emprestimos = dados;
                 preencherTabela(tipo, dados);
             } else if (tipo === 'avaliacoes') {

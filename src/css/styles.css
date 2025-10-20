@@ -2,8 +2,8 @@
    Variáveis globais
 ===================== */
 :root {
-    --bg: #f6f8fb;
-    --primary: #2067ED;
+    --bg: #c1d4ec;
+    --primary: #80afa5;
     --muted: #6b7280;
     --card: #ffffff;
     --success: #10b981;
@@ -26,11 +26,10 @@ main {
 body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
     margin: 0;
-    background: var(--bg);
     font-size: 16px;
     line-height: 1.6;
     scroll-behavior: smooth;
-    background-color: #f9fafb;
+    background: url("/bg.png")no-repeat center center/cover;
     color: #1f2937;
 }
 
@@ -44,13 +43,18 @@ body {
    Header
 ===================== */
 header {
-    background: linear-gradient(90deg, var(--primary), #1a56d6);
+    background: linear-gradient(90deg, #80afa56f, #7fa4a4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     padding: 20px 0;
 }
 
 .header-inner {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
@@ -59,6 +63,21 @@ header {
 header h1 {
     font-weight: 600;
     margin: 0;
+}
+
+header h1 span {
+    font-family: 'Cursive', cursive;
+    font-weight: 400;
+    font-size: 1.2em;
+    color: #1a5074;
+    text-shadow: #10b981 1px 1px 2px;
+}
+
+/* =====================
+  h2 subtext
+===================== */
+h2 {
+    color: white;
 }
 
 /* =====================
@@ -94,11 +113,23 @@ header h1 {
    Seções
 ===================== */
 .section {
-    background: var(--card);
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     margin: 20px 0;
     padding: 20px;
     border-radius: var(--radius);
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+    /* Animação de entrada */
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s ease-out;
+}
+
+.section.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .hidden {
@@ -255,6 +286,45 @@ tr:hover td {
 }
 
 /* =====================
+   Menu hamburguer
+===================== */
+.hamburger {
+    display: none;
+    border: none;
+    background: none;
+    border-top: 3px solid #fff;
+    cursor: pointer;
+}
+
+.hamburger::after,
+.hamburger::before {
+    content: " ";
+    display: block;
+    width: 30px;
+    height: 3px;
+    background: #fff;
+    margin-top: 5px;
+    position: relative;
+    transition: 0.3s;
+}
+
+/* =====================
+   Scrollbar Customizado
+===================== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #619288;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #1a5074;
+    width: 50px;
+}
+
+/* =====================
    Responsividade
 ===================== */
 @media (max-width: 800px) {
@@ -271,6 +341,14 @@ tr:hover td {
         width: 100%;
         justify-content: flex-start;
         gap: 6px;
+    }
+
+    .hamburger {
+        position: fixed;
+        top: 26px;
+        right: 16px;
+        display: block;
+        z-index: 1;
     }
 }
 
@@ -296,11 +374,17 @@ tr:hover td {
 
 /* === Melhorias Visuais === */
 
-button, .nav-btn, .submit-btn, .reset-btn {
+button,
+.nav-btn,
+.submit-btn,
+.reset-btn {
     transition: all 0.3s ease;
 }
 
-button:hover, .nav-btn:hover, .submit-btn:hover, .reset-btn:hover {
+button:hover,
+.nav-btn:hover,
+.submit-btn:hover,
+.reset-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -355,13 +439,19 @@ tbody td {
 
 
 /* === Estilo Avançado === */
-button, .nav-btn, .submit-btn, .reset-btn {
+button,
+.nav-btn,
+.submit-btn,
+.reset-btn {
     transition: all 0.3s ease;
     border-radius: 8px;
     font-weight: 600;
 }
 
-button:hover, .nav-btn:hover, .submit-btn:hover, .reset-btn:hover {
+button:hover,
+.nav-btn:hover,
+.submit-btn:hover,
+.reset-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -380,7 +470,9 @@ label {
     color: #374151;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
     padding: 10px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
@@ -389,7 +481,9 @@ input, select, textarea {
     color: #1f2937;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: #2563eb;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
@@ -458,13 +552,27 @@ tr:hover td {
 }
 
 @media (max-width: 768px) {
+
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
+    main {
+        max-width: var(--max-w);
+        margin: 50px;
+        padding: 0 16px;
+    }
+
     .form-grid {
         grid-template-columns: 1fr;
     }
+
     .header-inner {
         flex-direction: column;
         align-items: flex-start;
     }
+
     .nav {
         flex-direction: column;
         gap: 6px;

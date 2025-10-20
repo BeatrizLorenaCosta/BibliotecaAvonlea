@@ -276,3 +276,50 @@ function carregarSelects() {
             });
         });
 }
+
+// Animação de seções »»»
+document.addEventListener('DOMContentLoaded', () => {
+    carregarDados('autores');
+    carregarDados('categorias');
+    carregarDados('livros');
+    carregarDados('utilizadores');
+    carregarDados('emprestimos');
+    carregarDados('avaliacoes');
+
+    const sections = document.querySelectorAll('.nav-btn');
+    sections.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const allSections = document.querySelectorAll('.section');
+            // esconde todas e remove 'visible' para permitir re-play da animação
+            allSections.forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('visible');
+            });
+
+            const target = document.getElementById(btn.dataset.section);
+            target.classList.remove('hidden');
+
+            // forçar reflow / adicionar pequeno delay para que a transição seja aplicada novamente
+            requestAnimationFrame(() => {
+                setTimeout(() => target.classList.add('visible'), 50);
+            });
+
+            carregarDados('autores');
+            carregarDados('categorias');
+            carregarDados('livros');
+            carregarDados('utilizadores');
+            carregarDados('emprestimos');
+            carregarDados('avaliacoes');
+        });
+    });
+    
+});
+
+
+// Menu hamburguer
+const hamburger = document.querySelector(".hamburger");
+const nav = document.querySelector(".nav");
+
+if (hamburger && nav) {
+    hamburger.addEventListener("click", () => nav.classList.toggle("active"));
+}

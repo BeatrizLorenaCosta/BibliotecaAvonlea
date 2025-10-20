@@ -94,7 +94,7 @@ Se for o primeiro push no PC:
 ==============================================
 🔟 OPCIONAL - USAR O SCRIPT AUTOMÁTICO
 ==============================================
-Arquivo: git_team_push.bat
+Arquivo: git_team_push.bat (ainda não temos)
 → Dá duplo clique.
 → Ele faz automaticamente:
    - git pull

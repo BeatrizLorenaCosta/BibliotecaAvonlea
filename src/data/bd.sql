@@ -29,6 +29,7 @@ CREATE TABLE livros (
     categoria_id INT NOT NULL,
     ano INT,
     disponivel BOOLEAN DEFAULT TRUE,
+    exemplares INT NOT NULL,
     FOREIGN KEY (autor_id) REFERENCES autores(id_autor),
     FOREIGN KEY (categoria_id) REFERENCES categorias(id_categoria)
 );

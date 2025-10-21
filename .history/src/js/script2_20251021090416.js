@@ -66,7 +66,6 @@ function carregarDados(tipo) {
                 
             } else if (tipo === 'utilizadores') {
                 utilizadores = dados;
-                preencherTabela(tipo, dados);
                 preencherSelect('emprestimo-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
                 preencherSelect('avaliacao-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
                 if (!document.getElementById('emprestimos').classList.contains('hidden')) {

@@ -10,6 +10,7 @@ app.use(express.json());
 // ligação à base de dados
 const db = mysql.createConnection({
     host: 'localhost',
+    port: 3306,
     user: 'biblio',
     password: '12345',
     database: 'biblioteca'
@@ -234,9 +235,4 @@ app.delete('/api/avaliacoes/:id', (req, res) => {
 });
 
 // ---- INICIAR SERVIDOR ----
-// Servir o HTML principal
-app.use(express.static('public'));
-// Servir os recursos (CSS, JS, imagens, etc.)
-app.use('/src', express.static('src'));
-// Iniciar o servidor
 app.listen(3000, () => console.log('🚀 Servidor ativo em http://localhost:3000'));

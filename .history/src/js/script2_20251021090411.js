@@ -38,7 +38,6 @@ function carregarDados(tipo) {
         .then(dados => {
             if (tipo === 'autores') {
                 autores = dados;
-                preencherTabela(tipo, dados);
                 preencherSelect('livro-autor_id', dados, 'id_autor', 'nome_autor');
                 // se esta section livros
                 if (!document.getElementById('livros').classList.contains('hidden')) {
@@ -54,7 +53,6 @@ function carregarDados(tipo) {
                 }
             } else if (tipo === 'livros') {
                 livros = dados;
-                preencherTabela(tipo, dados);
                 preencherSelect('emprestimo-livro_id', livros, 'id_livro', 'titulo');
                 preencherSelect('avaliacao-livro_id', livros, 'id_livro', 'titulo');
                 if (!document.getElementById('emprestimos').classList.contains('hidden')) {
@@ -66,7 +64,6 @@ function carregarDados(tipo) {
                 
             } else if (tipo === 'utilizadores') {
                 utilizadores = dados;
-                preencherTabela(tipo, dados);
                 preencherSelect('emprestimo-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
                 preencherSelect('avaliacao-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
                 if (!document.getElementById('emprestimos').classList.contains('hidden')) {

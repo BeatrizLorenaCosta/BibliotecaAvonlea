@@ -77,6 +77,7 @@ function carregarDados(tipo) {
                 }
             } else if (tipo === 'emprestimos') {
                 emprestimos = dados;
+                
                 preencherTabela(tipo, dados);
             } else if (tipo === 'avaliacoes') {
                 avaliacoes = dados;

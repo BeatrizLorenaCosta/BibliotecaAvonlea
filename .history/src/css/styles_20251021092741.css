@@ -19,27 +19,18 @@
     box-sizing: border-box;
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-}
-
-
 main {
     margin: 50px;
 }
 
 body {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin: 0;
     font-size: 16px;
     line-height: 1.6;
     scroll-behavior: smooth;
+    background: url("/src/img/bg.png") no-repeat center center/cover;
     color: #1f2937;
-
-    /* Fundo */
-    background: url("/src/img/bg.png") no-repeat center center fixed;
-    background-size: cover;
-    background-attachment: fixed;
 }
 
 .container {
@@ -142,8 +133,6 @@ h2 {
 }
 
 section#inicio {
-    color: #ffffff;
-}
 
 .hidden {
     display: none;

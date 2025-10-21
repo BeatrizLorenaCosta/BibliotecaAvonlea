@@ -314,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
             carregarDados('utilizadores');
             carregarDados('emprestimos');
             carregarDados('avaliacoes');
+            
         });
     });
     

@@ -237,6 +237,6 @@ app.delete('/api/avaliacoes/:id', (req, res) => {
 // Servir o HTML principal
 app.use(express.static('public'));
 // Servir os recursos (CSS, JS, imagens, etc.)
-app.use('/src', express.static('src'));
+app.use('../src', express.static('src'));
 // Iniciar o servidor
 app.listen(3000, () => console.log('🚀 Servidor ativo em http://localhost:3000'));

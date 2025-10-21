@@ -61,6 +61,15 @@ CREATE TABLE avaliacoes (
     FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador)
 );
 
+CREATE TABLE contas (
+    id_conta INT PRIMARY KEY AUTO_INCREMENT,
+    utilizador_id INT NOT NULL,
+    senha TEXT NOT NULL,
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador) ON DELETE CASCADE
+);
+
+
 INSERT INTO autores (nome_autor, nacionalidade, data_nascimento)
 VALUES 
 ('Machado de Assis', 'Brasileiro', '1839-06-21'),
@@ -71,7 +80,19 @@ INSERT INTO categorias (nome_categoria, descricao)
 VALUES 
 ('Romance', 'Narrativas longas com desenvolvimento de personagens'),
 ('Realismo', 'Movimento literário que retrata a realidade'),
-('Ficção Científica', 'Histórias com elementos científicos e tecnológicos');
+('Ficção Científica', 'Histórias com elementos científicos e tecnológicos'),
+('Fantasia', 'Histórias com elementos mágicos ou sobrenaturais'),
+('Mistério', 'Narrativas centradas em crimes ou enigmas a resolver'),
+('Terror', 'Histórias que provocam medo ou suspense'),
+('Aventura', 'Relatos de viagens e desafios emocionantes'),
+('História', 'Obras baseadas em eventos históricos ou épocas passadas'),
+('Biografia', 'Narrativas sobre a vida de pessoas reais'),
+('Poesia', 'Textos literários em verso, focados em emoções e ritmo'),
+('Drama', 'Narrativas com conflitos intensos entre personagens'),
+('Infantojuvenil', 'Livros direcionados para crianças e adolescentes'),
+('Humor', 'Obras com caráter cômico ou satírico'),
+('Autoajuda', 'Livros que oferecem conselhos para desenvolvimento pessoal'),
+('Clássicos', 'Obras reconhecidas como importantes na literatura universal');
 
 INSERT INTO utilizadores (nome_utilizador, email, tipo)
 VALUES 
@@ -95,4 +116,10 @@ VALUES
 (1, 1, 'Excelente leitura, muito profundo.', 5),
 (2, 2, 'Interessante, mas um pouco lento.', 3),
 (3, 3, 'Obra-prima da literatura brasileira.', 5);
+
+INSERT INTO contas (utilizador_id, senha) VALUES
+(1, '12345'),
+(2, '12345'),
+(3, 'admin');
+
 

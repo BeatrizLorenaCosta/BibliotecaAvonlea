@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca De 𝒜𝓋𝑜𝓃𝓁𝑒𝒶 </title>
+    <!--Biblioteca Digital Interativa -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>📖</text></svg>">
+    <link rel="stylesheet" href="/src/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="/src/js/script2.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="container header-inner">
+
+            <h1>Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span></h1>
+            <!-- <button id="menu-toggle" aria-label="Alternar menu">☰</button>-->
+            <button class="hamburger"></button>
+            <nav aria-label="Seções da biblioteca" class="nav">
+                <button class="nav-btn" data-section="inicio" title="Página inicial">🏠 Início</button>
+                <button class="nav-btn" data-section="livros">Livros</button>
+                <button class="nav-btn" data-section="autores">Autores</button>
+                <button class="nav-btn" data-section="categorias">Categorias</button>
+                <button class="nav-btn" data-section="utilizadores">Utilizadores</button>
+                <button class="nav-btn" data-section="emprestimos">Empréstimos</button>
+                <button class="nav-btn" data-section="avaliacoes">Avaliações</button>
+                <button title="Login" id="login" class="nav-btn" data-section="login-section"></button>
+            </nav>
+
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Seção de Início -->
+        <section id="inicio" class="section visible">
+            <h2>Bem-vindo à Biblioteca de 𝒜𝓋𝑜𝓃𝓁𝑒𝒶 📚</h2>
+            <p>Descubra livros, autores e categorias — explore e mantenha viva a magia da leitura!</p>
+            <p>Use o menu acima para navegar entre as secções.</p>
+        </section>
+
+
+        <!-- Seção para Livros -->
+        <section id="livros" class="section">
+            <h2>Livros</h2>
+            <p id="livros-mensagem" style="color: red; display: none;"></p>
+            <form id="form-livros" onsubmit="return false;">
+                <input type="hidden" id="livro-id">
+                <label>Título: <input type="text" id="livro-titulo" required></label>
+                <label>Autor: <select id="livro-autor_id" required></select></label>
+                <label>Categoria: <select id="livro-categoria_id" required></select></label>
+                <label>Ano: <input type="number" id="livro-ano" required></label>
+                <label>Disponível: <input type="checkbox" id="livro-disponivel"></label>
+                <button class="submit-btn" onclick="adicionarOuAtualizar('livros')">Adicionar/Atualizar</button>
+            </form>
+            <table id="tabela-livros">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Categoria</th>
+                        <th>Ano</th>
+                        <th>Disponível</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- Seção para Autores -->
+        <section id="autores" class="section hidden">
+            <h2>Autores</h2>
+            <p id="autores-mensagem" style="color: red; display: none;"></p>
+            <form id="form-autores" onsubmit="return false;">
+                <input type="hidden" id="autor-id">
+                <label>Nome: <input type="text" id="autor-nome" required></label>
+                <label>Nacionalidade: <input type="text" id="autor-nacionalidade"></label>
+                <label>Data Nascimento: <input type="date" id="autor-data_nascimento"></label>
+                <button class="submit-btn" onclick="adicionarOuAtualizar('autores')">Adicionar/Atualizar</button>
+            </form>
+            <table id="tabela-autores">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Nacionalidade</th>
+                        <th>Data Nascimento</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- Seção para Categorias -->
+        <section id="categorias" class="section hidden">
+            <h2>Categorias</h2>
+            <p id="categorias-mensagem" style="color: red; display: none;"></p>
+            <form id="form-categorias" onsubmit="return false;">
+                <input type="hidden" id="categoria-id">
+                <label>Nome: <input type="text" id="categoria-nome" required></label>
+                <label>Descrição: <input type="text" id="categoria-descricao"></label>
+                <button class="submit-btn" onclick="adicionarOuAtualizar('categorias')">Adicionar/Atualizar</button>
+            </form>
+            <table id="tabela-categorias">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- Seção para Utilizadores -->
+        <section id="utilizadores" class="section hidden">
+            <h2>Utilizadores</h2>
+            <form id="form-utilizadores" onsubmit="return false;">
+                <input type="hidden" id="utilizador-id">
+                <label>Nome: <input type="text" id="utilizador-nome" required></label>
+                <label>Email: <input type="email" id="utilizador-email" required></label>
+                <label>Tipo: <select id="utilizador-tipo">
+                        <option value="aluno">Aluno</option>
+                        <option value="professor">Professor</option>
+                        <option value="outro">Outro</option>
+                    </select></label>
+                <button class="submit-btn" onclick="adicionarOuAtualizar('utilizadores')">Adicionar/Atualizar</button>
+            </form>
+            <table id="tabela-utilizadores">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- Seção para Empréstimos (Extra) -->
+        <section id="emprestimos" class="section hidden">
+            <h2>Empréstimos</h2>
+            <form id="form-emprestimos" onsubmit="return false;">
+                <input type="hidden" id="emprestimo-id">
+                <label>Livro: <select id="emprestimo-livro_id" required></select></label>
+                <label>Utilizador: <select id="emprestimo-utilizador_id" required></select></label>
+                <label>Data Empréstimo: <input type="date" id="emprestimo-data_emprestimo" required></label>
+                <label>Data Devolução: <input type="date" id="emprestimo-data_devolucao"></label>
+                <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
+            </form>
+            <table id="tabela-emprestimos">
+                <thead>
+                    <tr>
+                        <th>Livro</th>
+                        <th>Utilizador</th>
+                        <th>Data Empréstimo</th>
+                        <th>Data Devolução</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        <!-- Seção para Avaliações (Extra) -->
+        <section id="avaliacoes" class="section hidden">
+            <h2>Avaliações</h2>
+            <form id="form-avaliacoes" onsubmit="return false;">
+                <input type="hidden" id="avaliacao-id">
+                <label>Livro: <select id="avaliacao-livro_id" required></select></label>
+                <label>Utilizador: <select id="avaliacao-utilizador_id" required></select></label>
+                <label>Comentário: <textarea id="avaliacao-comentario"></textarea></label>
+                <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5"
+                        required></label>
+                <button class="submit-btn" onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
+            </form>
+            <table id="tabela-avaliacoes">
+                <thead>
+                    <tr>
+                        <th>Livro</th>
+                        <th>Utilizador</th>
+                        <th>Comentário</th>
+                        <th>Classificação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+        
+        <!-- Seção de Login -->
+        <section id="login-section" class="section">
+            <h2>Iniciar Sessão</h2>
+            <form id="form-login" onsubmit="return false;">
+                <label>Email:
+                    <input type="email" id="login-email" placeholder="Insira o seu email" required>
+                </label>
+                <label>Senha:
+                    <input type="password" id="login-senha" placeholder="Insira a sua senha" required>
+                </label>
+                <button class="submit-btn" onclick="fazerLogin()">Entrar</button>
+            </form>
+            <p id="login-erro" style="color: red; display: none;">Credenciais inválidas. Tente novamente.</p>
+        </section>
+
+    </main>
+
+
+</body>
+
+</html>

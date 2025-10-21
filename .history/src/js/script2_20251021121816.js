@@ -122,8 +122,8 @@ function gerarLinha(tipo, item) {
         },
         avaliacoes: () => {
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
-                <td>${item.nome_utilizador || 'Desconhecido'}</td>
+                <td>${livro?.titulo || 'Desconhecido'}</td>
+                <td>${utilizador?.nome_utilizador || 'Desconhecido'}</td>
                 <td>${item.comentario}</td>
                 <td>${item.classificacao}</td>
                 <td class="actions">

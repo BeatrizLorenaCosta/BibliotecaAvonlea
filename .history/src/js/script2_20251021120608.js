@@ -1,0 +1,297 @@
+
+let livros = [];
+let utilizadores = [];
+let autores = [];
+let categorias = [];
+let emprestimos = [];
+let avaliacoes = [];
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('.nav-btn');
+    sections.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(btn.dataset.section).classList.remove('hidden');
+            carregarDados(btn.dataset.section);
+        });
+    });
+    
+});
+
+// Função genérica para carregar dados
+function carregarDados(tipo) {
+    fetch(`http://localhost:3000/api/${tipo}`)
+        .then(res => res.json())
+        .then(dados => {
+            if (tipo === 'autores') {
+                autores = dados;
+                preencherTabela(tipo, dados);
+                preencherSelect('livro-autor_id', dados, 'id_autor', 'nome_autor');
+                
+            } else if (tipo === 'categorias') {
+                categorias = dados;
+                preencherTabela(tipo, dados);
+                preencherSelect('livro-categoria_id', dados, 'id_categoria', 'nome_categoria');
+            } else if (tipo === 'livros') {
+                livros = dados;
+                preencherTabela(tipo, dados);
+                preencherSelect('emprestimo-livro_id', livros, 'id_livro', 'titulo');
+                preencherSelect('avaliacao-livro_id', livros, 'id_livro', 'titulo');
+                
+            } else if (tipo === 'utilizadores') {
+                utilizadores = dados;
+                preencherTabela(tipo, dados);
+                preencherSelect('emprestimo-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
+                preencherSelect('avaliacao-utilizador_id', utilizadores, 'id_utilizador', 'nome_utilizador');
+            } else if (tipo === 'emprestimos') {
+                emprestimos = dados;
+                preencherTabela(tipo, dados);
+            } else if (tipo === 'avaliacoes') {
+                avaliacoes = dados;
+                preencherTabela(tipo, dados);
+            }
+        });
+}
+
+function preencherSelect(selectId, dados, idCampo, nomeCampo) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+
+    // Mantém o primeiro option "Selecione..."
+    if (idCampo == 'id_autor')
+        select.innerHTML = '<option value="" selected>Selecione um autor</option>';
+    else if (idCampo == 'id_categoria')
+        select.innerHTML = '<option value="" selected>Selecione uma categoria</option>';
+    else if (idCampo == 'id_livro')
+        select.innerHTML = '<option value="" selected>Selecione um livro</option>';
+    else if (idCampo == 'id_utilizador')
+        select.innerHTML = '<option value="" selected>Selecione um utilizador</option>';
+
+    dados.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item[idCampo];
+        option.textContent = item[nomeCampo];
+        select.appendChild(option);
+    });
+}
+
+// Preencher tabela
+
+function preencherTabela(tipo, dados) {
+    const tbody = document.querySelector(`#tabela-${tipo} tbody`);
+    tbody.innerHTML = '';
+
+    dados.forEach(item => {
+        const tr = document.createElement('tr');
+
+        if (tipo === 'livros') {
+            const categoria = categorias.find(c => c.id_categoria === item.categoria_id);
+
+            tr.innerHTML = `
+                <td>${item.titulo}</td>
+                <td>${item.nome_autor  ? item.nome_autor : 'Desconhecido'}</td>
+                <td>${item.nome_categoria ? item.nome_categoria : 'Desconhecida'}</td>
+                <td>${item.ano}</td>
+                <td>${item.disponivel ? 'Sim' : 'Não'}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editar('${tipo}', ${item.id_livro})">Editar</button>
+                    <button class="delete" onclick="deletar('${tipo}', ${item.id_livro})">Excluir</button>
+                </td>
+            `;
+        } else if (tipo === 'autores') {
+            tr.innerHTML = `
+                <td>${item.nome_autor}</td>
+                <td>${item.nacionalidade}</td>
+                <td>${new Date(item.data_nascimento).toLocaleDateString('pt-BR')}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editar('autores', ${item.id_autor})">Editar</button>
+                    <button class="delete" onclick="deletar('autores', ${item.id_autor})">Excluir</button>
+                </td>
+            `;
+        } else if (tipo === 'categorias') {
+            tr.innerHTML = `
+                <td>${item.nome_categoria}</td>
+                <td>${item.descricao}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editar('categorias', ${item.id_categoria})">Editar</button>
+                    <button class="delete" onclick="deletar('categorias', ${item.id_categoria})">Excluir</button>
+                </td>
+            `;
+        } else if (tipo === 'emprestimos') {
+            const livro = livros.find(l => l.id_livro === item.livro_id);
+            const utilizador = utilizadores.find(u => u.id_utilizador === item.utilizador_id);
+
+            tr.innerHTML = `
+                    <td>${item.titulo  ? item.titulo : 'Desconhecido'}</td>
+                    <td>${item.nome_utilizador ? item.nome_utilizador : 'Desconhecido'}</td>
+                    <td>${new Date(item.data_emprestimo).toLocaleDateString('pt-BR')}</td>
+                    <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-BR') : ''}</td>
+                    <td class="actions">
+                        <button class="edit" onclick="editar('emprestimos', ${item.id})">Editar</button>
+                        <button class="delete" onclick="deletar('emprestimos', ${item.id})">Excluir</button>
+                    </td>
+                `;
+
+        } else if (tipo === 'avaliacoes') {
+            const livro = livros.find(l => l.id_livro === item.livro_id);
+            const utilizador = utilizadores.find(u => u.id_utilizador === item.utilizador_id);
+            tr.innerHTML = `
+                <td>${item.titulo ? item.titulo : 'Desconhecido'}</td>
+                <td>${item.nome_utilizador ? item.nome_utilizador : 'Desconhecido'}</td>
+                <td>${item.comentario}</td>
+                <td>${item.classificacao}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editar('avaliacoes', ${item.id})">Editar</button>
+                    <button class="delete" onclick="deletar('avaliacoes', ${item.id})">Excluir</button>
+                </td>
+            `;
+        } else if (tipo === 'utilizadores') {
+            tr.innerHTML = `
+                <td>${item.nome_utilizador}</td>
+                <td>${item.email}</td>
+                <td>${item.tipo}</td>
+                <td class="actions">
+                    <button class="edit" onclick="editar('utilizadores', ${item.id})">Editar</button>
+                    <button class="delete" onclick="deletar('utilizadores', ${item.id})">Excluir</button>
+                </td>
+            `;
+        }
+
+        tbody.appendChild(tr);
+    });
+}
+
+
+// Adicionar ou atualizar
+function adicionarOuAtualizar(tipo) {
+    const form = document.getElementById(`form-${tipo}`);
+    const dados = {};
+    form.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.type === 'checkbox') {
+            dados[el.id.split('-')[1]] = el.checked;
+        } else {
+            dados[el.id.split('-')[1]] = el.value;
+        }
+    });
+
+    fetch(`http://localhost:3000/api/${tipo}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+    })
+    .then(res => res.text())
+    .then(msg => {
+        alert(msg);
+        form.reset();
+        carregarDados(tipo);
+    });
+}
+
+// Editar
+function editar(tipo, id) {
+    fetch(`http://localhost:3000/api/${tipo}`)
+        .then(res => res.json())
+        .then(dados => {
+            const item = dados.find(el => el.id === id);
+            const form = document.getElementById(`form-${tipo}`);
+            form.querySelectorAll('input, select, textarea').forEach(el => {
+                const campo = el.id.split('-')[1];
+                if (el.type === 'checkbox') {
+                    el.checked = item[campo];
+                } else {
+                    el.value = item[campo];
+                }
+            });
+        });
+}
+
+// Deletar
+function deletar(tipo, id) {
+    if (confirm('Tem certeza que deseja excluir?')) {
+        fetch(`http://localhost:3000/api/${tipo}/${id}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.text())
+        .then(msg => {
+            alert(msg);
+            carregarDados(tipo);
+        });
+    }
+}
+
+// Carregar autores e categorias nos selects
+function carregarSelects() {
+    fetch('http://localhost:3000/api/autores')
+        .then(res => res.json())
+        .then(autores => {
+            const selectAutor = document.getElementById('livro-autor_id');
+            selectAutor.innerHTML = '';
+            autores.forEach(autor => {
+                const option = document.createElement('option');
+                option.value = autor.id;
+                option.textContent = autor.nome;
+                selectAutor.appendChild(option);
+            });
+        });
+
+    fetch('http://localhost:3000/api/categorias')
+        .then(res => res.json())
+        .then(categorias => {
+            const selectCategoria = document.getElementById('livro-categoria_id');
+            selectCategoria.innerHTML = '';
+            categorias.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.id;
+                option.textContent = cat.nome;
+                selectCategoria.appendChild(option);
+            });
+        });
+}
+
+// Animação de seções »»»
+document.addEventListener('DOMContentLoaded', () => {
+    carregarDados('autores');
+    carregarDados('categorias');
+    carregarDados('livros');
+    carregarDados('utilizadores');
+    carregarDados('emprestimos');
+    carregarDados('avaliacoes');
+
+    const sections = document.querySelectorAll('.nav-btn');
+    sections.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const allSections = document.querySelectorAll('.section');
+            // esconde todas e remove 'visible' para permitir re-play da animação
+            allSections.forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('visible');
+            });
+
+            const target = document.getElementById(btn.dataset.section);
+            target.classList.remove('hidden');
+
+            // forçar reflow / adicionar pequeno delay para que a transição seja aplicada novamente
+            requestAnimationFrame(() => {
+                setTimeout(() => target.classList.add('visible'), 50);
+            });
+
+            carregarDados('autores');
+            carregarDados('categorias');
+            carregarDados('livros');
+            carregarDados('utilizadores');
+            carregarDados('emprestimos');
+            carregarDados('avaliacoes');
+        });
+    });
+    
+});
+
+
+// Menu hamburguer
+const hamburger = document.querySelector(".hamburger");
+const nav = document.querySelector(".nav");
+
+if (hamburger && nav) {
+    hamburger.addEventListener("click", () => nav.classList.toggle("active"));
+}

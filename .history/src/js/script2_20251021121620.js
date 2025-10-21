@@ -121,14 +121,16 @@ function gerarLinha(tipo, item) {
             `;
         },
         avaliacoes: () => {
+            const livro = dados.livros.find(l => l.id_livro === item.livro_id);
+            const utilizador = dados.utilizadores.find(u => u.id_utilizador === item.utilizador_id);
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
-                <td>${item.nome_utilizador || 'Desconhecido'}</td>
+                <td>${livro?.titulo || 'Desconhecido'}</td>
+                <td>${utilizador?.nome_utilizador || 'Desconhecido'}</td>
                 <td>${item.comentario}</td>
                 <td>${item.classificacao}</td>
                 <td class="actions">
                     <button class="edit" onclick="editar('avaliacoes', ${item.id_avaliacao})">Editar</button>
-                    <button class="delete" onclick="deletar('avaliacoes', ${item.id_avaliacao})">Excluir</button>
+                    <button class="delete" onclick="deletar('avaliacoes', ${item.id})">Excluir</button>
                 </td>
             `;
         },
@@ -137,8 +139,8 @@ function gerarLinha(tipo, item) {
             <td>${item.email}</td>
             <td>${item.tipo}</td>
             <td class="actions">
-                <button class="edit" onclick="editar('utilizadores', ${item.id_utilizador})">Editar</button>
-                <button class="delete" onclick="deletar('utilizadores', ${item.id_utilizador})">Excluir</button>
+                <button class="edit" onclick="editar('utilizadores', ${item.id})">Editar</button>
+                <button class="delete" onclick="deletar('utilizadores', ${item.id})">Excluir</button>
             </td>
         `
     };

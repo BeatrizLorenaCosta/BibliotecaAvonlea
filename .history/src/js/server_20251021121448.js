@@ -205,7 +205,7 @@ app.delete('/api/emprestimos/:id', (req, res) => {
 
 // -------- AVALIACOES --------
 app.get('/api/avaliacoes', (req, res) => {
-    db.query('SELECT a.id_avaliacao, l.titulo, u.nome_utilizador, a.comentario, a.classificacao FROM avaliacoes a JOIN livros l ON a.livro_id = l.id_livro JOIN utilizadores u ON a.utilizador_id = u.id_utilizador', (err, results) => {
+    db.query('SELECT l.titulo, u.nome_utilizador, a.comentario, a.classificacao FROM avaliacoes a JOIN livros l ON a.livro_id = l.id_livro JOIN utilizadores u ON a.utilizador_id = u.id_utilizador', (err, results) => {
         if (err) return res.status(500).json({erro: err});
         res.json(results);
     });

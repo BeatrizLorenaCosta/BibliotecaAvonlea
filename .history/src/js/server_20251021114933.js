@@ -22,7 +22,7 @@ db.connect(err => {
 
 // -------- LIVROS --------
 app.get('/api/livros', (req, res) => {
-    db.query('SELECT l.id_livro, l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel FROM livros l JOIN autores a ON l.autor_id = a.id_autor JOIN categorias c ON l.categoria_id = c.id_categoria', (err, results) => {
+    db.query('SELECT l.titulo, a.nome_a FROM livros', (err, results) => {
         if (err) return res.status(500).json({erro: err});
         res.json(results);
     });
@@ -160,7 +160,7 @@ app.delete('/api/utilizadores/:id', (req, res) => {
 
 // -------- EMPRESTIMOS --------
 app.get('/api/emprestimos', (req, res) => {
-    db.query('SELECT e.id_emprestimo, l.titulo, u.nome_utilizador, e.data_emprestimo, e.data_devolucao FROM emprestimos e JOIN livros l ON e.livro_id = l.id_livro JOIN utilizadores u ON e.utilizador_id = u.id_utilizador', (err, results) => {
+    db.query('SELECT * FROM emprestimos', (err, results) => {
         if (err) return res.status(500).json({erro: err});
         res.json(results);
     });
@@ -205,7 +205,7 @@ app.delete('/api/emprestimos/:id', (req, res) => {
 
 // -------- AVALIACOES --------
 app.get('/api/avaliacoes', (req, res) => {
-    db.query('SELECT a.id_avaliacao, l.titulo, u.nome_utilizador, a.comentario, a.classificacao FROM avaliacoes a JOIN livros l ON a.livro_id = l.id_livro JOIN utilizadores u ON a.utilizador_id = u.id_utilizador', (err, results) => {
+    db.query('SELECT * FROM avaliacoes', (err, results) => {
         if (err) return res.status(500).json({erro: err});
         res.json(results);
     });

@@ -94,7 +94,7 @@ function gerarLinha(tipo, item) {
         autores: () => `
             <td>${item.nome_autor}</td>
             <td>${item.nacionalidade}</td>
-            <td>${new Date(item.data_nascimento).toLocaleDateString('pt-PT')}</td>
+            <td>${new Date(item.data_nascimento).toLocaleDateString('pt-BR')}</td>
             <td class="actions">
                 <button class="edit" onclick="editar('autores', ${item.id_autor})">Editar</button>
                 <button class="delete" onclick="deletar('autores', ${item.id_autor})">Excluir</button>
@@ -109,26 +109,30 @@ function gerarLinha(tipo, item) {
             </td>
         `,
         emprestimos: () => {
+            const livro = dados.livros.find(l => l.id_livro === item.livro_id);
+            const utilizador = dados.utilizadores.find(u => u.id_utilizador === item.utilizador_id);
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
-                <td>${item.nome_utilizador || 'Desconhecido'}</td>
-                <td>${new Date(item.data_emprestimo).toLocaleDateString('pt-PT')}</td>
-                <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
+                <td>${livro?.titulo || 'Desconhecido'}</td>
+                <td>${utilizador?.nome_utilizador || 'Desconhecido'}</td>
+                <td>${new Date(item.data_emprestimo).toLocaleDateString('pt-BR')}</td>
+                <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-BR') : ''}</td>
                 <td class="actions">
-                    <button class="edit" onclick="editar('emprestimos', ${item.id_emprestimo})">Editar</button>
-                    <button class="delete" onclick="deletar('emprestimos', ${item.id_emprestimo})">Excluir</button>
+                    <button class="edit" onclick="editar('emprestimos', ${item.id})">Editar</button>
+                    <button class="delete" onclick="deletar('emprestimos', ${item.id})">Excluir</button>
                 </td>
             `;
         },
         avaliacoes: () => {
+            const livro = dados.livros.find(l => l.id_livro === item.livro_id);
+            const utilizador = dados.utilizadores.find(u => u.id_utilizador === item.utilizador_id);
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
-                <td>${item.nome_utilizador || 'Desconhecido'}</td>
+                <td>${livro?.titulo || 'Desconhecido'}</td>
+                <td>${utilizador?.nome_utilizador || 'Desconhecido'}</td>
                 <td>${item.comentario}</td>
                 <td>${item.classificacao}</td>
                 <td class="actions">
-                    <button class="edit" onclick="editar('avaliacoes', ${item.id_avaliacao})">Editar</button>
-                    <button class="delete" onclick="deletar('avaliacoes', ${item.id_avaliacao})">Excluir</button>
+                    <button class="edit" onclick="editar('avaliacoes', ${item.id})">Editar</button>
+                    <button class="delete" onclick="deletar('avaliacoes', ${item.id})">Excluir</button>
                 </td>
             `;
         },
@@ -137,8 +141,8 @@ function gerarLinha(tipo, item) {
             <td>${item.email}</td>
             <td>${item.tipo}</td>
             <td class="actions">
-                <button class="edit" onclick="editar('utilizadores', ${item.id_utilizador})">Editar</button>
-                <button class="delete" onclick="deletar('utilizadores', ${item.id_utilizador})">Excluir</button>
+                <button class="edit" onclick="editar('utilizadores', ${item.id})">Editar</button>
+                <button class="delete" onclick="deletar('utilizadores', ${item.id})">Excluir</button>
             </td>
         `
     };

@@ -121,9 +121,11 @@ function gerarLinha(tipo, item) {
             `;
         },
         avaliacoes: () => {
+            const livro = dados.livros.find(l => l.id_livro === item.livro_id);
+            const utilizador = dados.utilizadores.find(u => u.id_utilizador === item.utilizador_id);
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
-                <td>${item.nome_utilizador || 'Desconhecido'}</td>
+                <td>${livro?.titulo || 'Desconhecido'}</td>
+                <td>${utilizador?.nome_utilizador || 'Desconhecido'}</td>
                 <td>${item.comentario}</td>
                 <td>${item.classificacao}</td>
                 <td class="actions">

@@ -194,6 +194,7 @@ app.post('/api/emprestimos', (req, res) => {
     );
 });
 
+// -------- Atualizar devolução (PUT) --------
 app.put('/api/emprestimos/:id', (req, res) => {
     const { livro_id, utilizador_id, data_emprestimo, data_devolucao } = req.body;
 

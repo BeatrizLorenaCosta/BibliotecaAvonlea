@@ -29,7 +29,6 @@ CREATE TABLE livros (
     categoria_id INT NOT NULL,
     ano INT,
     disponivel BOOLEAN DEFAULT TRUE,
-    exemplares INT NOT NULL,
     FOREIGN KEY (autor_id) REFERENCES autores(id_autor),
     FOREIGN KEY (categoria_id) REFERENCES categorias(id_categoria)
 );
@@ -104,12 +103,7 @@ INSERT INTO livros (titulo, autor_id, categoria_id, ano, disponivel)
 VALUES 
 ('Dom Casmurro', 1, 1, 1899, true),
 ('O Primo Basílio', 2, 2, 1878, true),
-('Memórias Póstumas de Brás Cubas', 1, 1, 1881, false);
-
-INSERT INTO emprestimos (livro_id, utilizador_id, data_emprestimo, data_devolucao)
-VALUES 
-(1, 1, '2025-10-01', '2025-10-15'),
-(2, 2, '2025-10-05', NULL);
+('Memórias Póstumas de Brás Cubas', 1, 1, 1881, true);
 
 INSERT INTO avaliacoes (livro_id, utilizador_id, comentario, classificacao)
 VALUES 

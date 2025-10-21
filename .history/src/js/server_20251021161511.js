@@ -22,29 +22,11 @@ db.connect(err => {
 
 // -------- LIVROS --------
 app.get('/api/livros', (req, res) => {
-    const sql = `
-        SELECT 
-            l.id_livro,
-            l.titulo,
-            a.nome_autor,
-            c.nome_categoria,
-            l.ano,
-            l.disponivel,
-            ROUND(AVG(av.classificacao), 2) AS media_avaliacao
-        FROM livros l
-        JOIN autores a ON l.autor_id = a.id_autor
-        JOIN categorias c ON l.categoria_id = c.id_categoria
-        LEFT JOIN avaliacoes av ON l.id_livro = av.livro_id
-        GROUP BY l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel
-    `;
-
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ erro: err });
+    db.query('SELECT l.id_livro, l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel FROM livros l JOIN autores a ON l.autor_id = a.id_autor JOIN categorias c ON l.categoria_id = c.id_categoria', (err, results) => {
+        if (err) return res.status(500).json({erro: err});
         res.json(results);
     });
 });
-
-
 
 app.post('/api/livros', (req, res) => {
     const { titulo, autor_id, categoria_id, ano, disponivel } = req.body;
@@ -150,11 +132,12 @@ app.delete('/api/categorias/:id', (req, res) => {
 app.get('/api/utilizadores', (req, res) => {
     const sql = `
         SELECT u.*, 
-            COUNT(e.id_emprestimo) AS livros_emprestados,
-            SUM(CASE WHEN e.id_emprestimo IS NOT NULL AND e.data_devolucao IS NULL THEN 1 ELSE 0 END) AS livros_nao_devolvidos
-        FROM utilizadores u
-        LEFT JOIN emprestimos e ON u.id_utilizador = e.utilizador_id
-        GROUP BY u.id_utilizador
+       COUNT(e.id_emprestimo) AS livros_emprestados,
+       SUM(CASE WHEN e.id_emprestimo IS NOT NULL AND e.data_devolucao IS NULL THEN 1 ELSE 0 END) AS livros_nao_devolvidos
+FROM utilizadores u
+LEFT JOIN emprestimos e ON u.id_utilizador = e.utilizador_id
+GROUP BY u.id_utilizador
+
     `;
     db.query(sql, (err, results) => {
         if (err) return res.status(500).json({ erro: err });
@@ -208,23 +191,18 @@ app.post('/api/emprestimos', (req, res) => {
         err => {
             if (err) return res.status(500).json({ erro: err });
 
-            // Só marcar como indisponível se não houver data de devolução
-            if (!dataDev) {
-                db.query(
-                    'UPDATE livros SET disponivel = 0 WHERE id_livro = ?',
-                    [livro_id],
-                    err2 => {
-                        if (err2) return res.status(500).json({ erro: err2 });
-                        res.json({ mensagem: 'Empréstimo registado e livro marcado como indisponível!' });
-                    }
-                );
-            } else {
-                res.json({ mensagem: 'Empréstimo registado!' });
-            }
+            // Atualiza o campo "disponivel" do livro
+            db.query(
+                'UPDATE livros SET disponivel = ? WHERE id_livro = ?',
+                [false, livro_id],
+                err2 => {
+                    if (err2) return res.status(500).json({ erro: err2 });
+                    res.json({ mensagem: 'Empréstimo registado e livro marcado como indisponível!' });
+                }
+            );
         }
     );
 });
-
 
 app.put('/api/emprestimos/:id', (req, res) => {
     const { livro_id, utilizador_id, data_emprestimo, data_devolucao } = req.body;
@@ -256,28 +234,10 @@ app.put('/api/emprestimos/:id', (req, res) => {
 });
 
 app.delete('/api/emprestimos/:id', (req, res) => {
-    const id = req.params.id;
-
-    // 1️⃣ Obter o livro_id do empréstimo
-    db.query('SELECT livro_id FROM emprestimos WHERE id_emprestimo=?', [id], (err, results) => {
-        if (err) return res.status(500).json({ erro: err });
-        if (results.length === 0) return res.status(404).json({ erro: 'Empréstimo não encontrado' });
-
-        const livro_id = results[0].livro_id;
-
-        // 2️⃣ Atualizar o livro para disponível
-        db.query('UPDATE livros SET disponivel=TRUE WHERE id_livro=?', [livro_id], (err) => {
-            if (err) return res.status(500).json({ erro: err });
-
-            // 3️⃣ Eliminar o empréstimo
-            db.query('DELETE FROM emprestimos WHERE id_emprestimo=?', [id], (err) => {
-                if (err) return res.status(500).json({ erro: err });
-                res.json({ mensagem: 'Empréstimo eliminado e livro disponível atualizado' });
-            });
-        });
-    });
+    db.query('DELETE FROM emprestimos WHERE id_emprestimo=?', [req.params.id],
+        err => err ? res.status(500).json({erro: err}) : res.json({mensagem:'Empréstimo eliminado'})
+    );
 });
-
 
 // -------- AVALIACOES --------
 app.get('/api/avaliacoes', (req, res) => {

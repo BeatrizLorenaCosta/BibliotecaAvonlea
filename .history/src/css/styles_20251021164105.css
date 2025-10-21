@@ -90,14 +90,6 @@ h2 {
     color: white;
 }
 
-#inicio h2 span {
-    font-family: 'Cursive', cursive;
-    font-weight: 400;
-    font-size: 1.1em;
-    color: #1a5074;
-    text-shadow: #10b981 1px 1px 2px;
-}
-
 /* =====================
    Navegação
 ===================== */

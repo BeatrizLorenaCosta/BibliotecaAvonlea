@@ -35,7 +35,7 @@ app.get('/api/livros', (req, res) => {
         JOIN autores a ON l.autor_id = a.id_autor
         JOIN categorias c ON l.categoria_id = c.id_categoria
         LEFT JOIN avaliacoes av ON l.id_livro = av.livro_id
-        GROUP BY l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel
+        GROUP BY l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel,
     `;
 
     db.query(sql, (err, results) => {
@@ -43,7 +43,6 @@ app.get('/api/livros', (req, res) => {
         res.json(results);
     });
 });
-
 
 
 app.post('/api/livros', (req, res) => {

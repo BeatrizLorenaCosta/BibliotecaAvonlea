@@ -90,14 +90,6 @@ h2 {
     color: white;
 }
 
-#inicio h2 span {
-    font-family: 'Cursive', cursive;
-    font-weight: 400;
-    font-size: 1.1em;
-    color: #1a5074;
-    text-shadow: #10b981 1px 1px 2px;
-}
-
 /* =====================
    Navegação
 ===================== */
@@ -180,23 +172,13 @@ section#inicio {
 ===================== */
 
 .estrela {
-    display: inline-block;
-    font-size: 18px;
-    position: relative;
-    color: lightgray; /* cor das vazias */
+    font-size: 1.4em;
+    color: #ccc; /* cor base das estrelas vazias */
 }
 
 .estrela.cheia {
-    color: gold;
+    color: gold; /* estrelas preenchidas */
 }
-
-.estrela.meia {
-    background: linear-gradient(90deg, gold 50%, lightgray 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: gold; /* fallback */
-}
-
 
 /* =====================
    Formulários

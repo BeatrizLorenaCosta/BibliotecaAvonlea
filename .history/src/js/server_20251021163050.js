@@ -22,29 +22,11 @@ db.connect(err => {
 
 // -------- LIVROS --------
 app.get('/api/livros', (req, res) => {
-    const sql = `
-        SELECT 
-            l.id_livro,
-            l.titulo,
-            a.nome_autor,
-            c.nome_categoria,
-            l.ano,
-            l.disponivel,
-            ROUND(AVG(av.classificacao), 2) AS media_avaliacao
-        FROM livros l
-        JOIN autores a ON l.autor_id = a.id_autor
-        JOIN categorias c ON l.categoria_id = c.id_categoria
-        LEFT JOIN avaliacoes av ON l.id_livro = av.livro_id
-        GROUP BY l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel
-    `;
-
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ erro: err });
+    db.query('SELECT l.id_livro, l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel FROM livros l JOIN autores a ON l.autor_id = a.id_autor JOIN categorias c ON l.categoria_id = c.id_categoria', (err, results) => {
+        if (err) return res.status(500).json({erro: err});
         res.json(results);
     });
 });
-
-
 
 app.post('/api/livros', (req, res) => {
     const { titulo, autor_id, categoria_id, ano, disponivel } = req.body;

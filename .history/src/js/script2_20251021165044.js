@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(btn.dataset.section).classList.remove('hidden');
             carregarDados(btn.dataset.section);
-            atualizarEstatisticas();
         });
     });
 });

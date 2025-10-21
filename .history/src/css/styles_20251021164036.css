@@ -90,14 +90,6 @@ h2 {
     color: white;
 }
 
-#inicio h2 span {
-    font-family: 'Cursive', cursive;
-    font-weight: 400;
-    font-size: 1.1em;
-    color: #1a5074;
-    text-shadow: #10b981 1px 1px 2px;
-}
-
 /* =====================
    Navegação
 ===================== */
@@ -179,23 +171,29 @@ section#inicio {
    Sistema de Avaliação por Estrelas
 ===================== */
 
-.estrela {
+/* CSS para estrelas com preenchimento proporcional */
+.estrelas {
     display: inline-block;
     font-size: 18px;
     position: relative;
-    color: lightgray; /* cor das vazias */
+    unicode-bidi: bidi-override;
+    color: lightgray; /* estrelas vazias */
 }
 
-.estrela.cheia {
-    color: gold;
+.estrelas::before {
+    content: '★★★★★';
 }
 
-.estrela.meia {
-    background: linear-gradient(90deg, gold 50%, lightgray 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: gold; /* fallback */
+.estrelas::after {
+    content: '★★★★★';
+    color: gold; /* estrelas preenchidas */
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    width: 0%; /* vamos atualizar com JS */
 }
+
 
 
 /* =====================

@@ -45,7 +45,6 @@ app.get('/api/livros', (req, res) => {
 });
 
 
-
 app.post('/api/livros', (req, res) => {
     const { titulo, autor_id, categoria_id, ano, disponivel } = req.body;
     db.query(

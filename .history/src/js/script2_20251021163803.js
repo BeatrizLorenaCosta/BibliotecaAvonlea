@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(btn.dataset.section).classList.remove('hidden');
             carregarDados(btn.dataset.section);
-            atualizarEstatisticas();
         });
     });
 });
@@ -85,16 +84,15 @@ function gerarEstrelas(qtd) {
     let estrelasHTML = '';
     for (let i = 1; i <= total; i++) {
         if (i <= Math.floor(qtd)) {
-            estrelasHTML += '<span class="estrela cheia">★</span>';
+            estrelasHTML += '<span class="estrela cheia">★</span>'; // cheia
         } else if (i === Math.ceil(qtd) && qtd % 1 !== 0) {
-            estrelasHTML += '<span class="estrela meia">★</span>';
+            estrelasHTML += '<span class="estrela meia">⯨</span>'; // meia estrela
         } else {
-            estrelasHTML += '<span class="estrela vazia">★</span>';
+            estrelasHTML += '<span class="estrela vazia">☆</span>'; // vazia
         }
     }
     return estrelasHTML;
 }
-
 
 
 // Função que gera HTML da linha da tabela
@@ -351,38 +349,6 @@ function ordenarTabela(tipo, indice, th) {
     // Atualiza a tabela
     linhas.forEach(linha => tbody.appendChild(linha));
 }
-
-// Função para atualizar as estatísticas rápidas
-function atualizarEstatisticas() {
-    // Total de livros
-    fetch('http://localhost:3000/api/livros')
-        .then(res => res.json())
-        .then(livros => {
-            document.getElementById('total-livros').textContent = livros.length;
-        })
-        .catch(err => console.error('Erro ao buscar livros:', err));
-
-    // Total de utilizadores
-    fetch('http://localhost:3000/api/utilizadores')
-        .then(res => res.json())
-        .then(utilizadores => {
-            document.getElementById('total-utilizadores').textContent = utilizadores.length;
-        })
-        .catch(err => console.error('Erro ao buscar utilizadores:', err));
-
-    // Total de avaliações
-    fetch('http://localhost:3000/api/avaliacoes')
-        .then(res => res.json())
-        .then(avaliacoes => {
-            document.getElementById('total-avaliacoes').textContent = avaliacoes.length;
-        })
-        .catch(err => console.error('Erro ao buscar avaliações:', err));
-}
-
-// Chama a função ao carregar a página
-window.addEventListener('DOMContentLoaded', () => {
-    atualizarEstatisticas();
-});
 
 // Menu hamburguer
 const hamburger = document.querySelector(".hamburger");

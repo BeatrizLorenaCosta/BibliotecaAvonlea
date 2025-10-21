@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById(btn.dataset.section).classList.remove('hidden');
             carregarDados(btn.dataset.section);
-            atualizarEstatisticas();
+            
         });
     });
 });
@@ -378,11 +378,6 @@ function atualizarEstatisticas() {
         })
         .catch(err => console.error('Erro ao buscar avaliações:', err));
 }
-
-// Chama a função ao carregar a página
-window.addEventListener('DOMContentLoaded', () => {
-    atualizarEstatisticas();
-});
 
 // Menu hamburguer
 const hamburger = document.querySelector(".hamburger");

@@ -22,29 +22,11 @@ db.connect(err => {
 
 // -------- LIVROS --------
 app.get('/api/livros', (req, res) => {
-    const sql = `
-        SELECT 
-            l.id_livro,
-            l.titulo,
-            a.nome_autor,
-            c.nome_categoria,
-            l.ano,
-            l.disponivel,
-            ROUND(AVG(av.classificacao), 2) AS media_avaliacao
-        FROM livros l
-        JOIN autores a ON l.autor_id = a.id_autor
-        JOIN categorias c ON l.categoria_id = c.id_categoria
-        LEFT JOIN avaliacoes av ON l.id_livro = av.livro_id
-        GROUP BY l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel
-    `;
-
-    db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ erro: err });
+    db.query('SELECT l.id_livro, l.id_livro, l.titulo, a.nome_autor, c.nome_categoria, l.ano, l.disponivel FROM livros l JOIN autores a ON l.autor_id = a.id_autor JOIN categorias c ON l.categoria_id = c.id_categoria', (err, results) => {
+        if (err) return res.status(500).json({erro: err});
         res.json(results);
     });
 });
-
-
 
 app.post('/api/livros', (req, res) => {
     const { titulo, autor_id, categoria_id, ano, disponivel } = req.body;
@@ -208,23 +190,18 @@ app.post('/api/emprestimos', (req, res) => {
         err => {
             if (err) return res.status(500).json({ erro: err });
 
-            // Só marcar como indisponível se não houver data de devolução
-            if (!dataDev) {
-                db.query(
-                    'UPDATE livros SET disponivel = 0 WHERE id_livro = ?',
-                    [livro_id],
-                    err2 => {
-                        if (err2) return res.status(500).json({ erro: err2 });
-                        res.json({ mensagem: 'Empréstimo registado e livro marcado como indisponível!' });
-                    }
-                );
-            } else {
-                res.json({ mensagem: 'Empréstimo registado!' });
-            }
+            // Atualiza o campo "disponivel" do livro
+            db.query(
+                'UPDATE livros SET disponivel = ? WHERE id_livro = ?',
+                [false, livro_id],
+                err2 => {
+                    if (err2) return res.status(500).json({ erro: err2 });
+                    res.json({ mensagem: 'Empréstimo registado e livro marcado como indisponível!' });
+                }
+            );
         }
     );
 });
-
 
 app.put('/api/emprestimos/:id', (req, res) => {
     const { livro_id, utilizador_id, data_emprestimo, data_devolucao } = req.body;

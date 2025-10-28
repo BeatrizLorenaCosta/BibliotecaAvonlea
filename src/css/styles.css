@@ -491,35 +491,9 @@ th {
 }
 
 
-/* === Melhorias Visuais === */
-
-button,
-.nav-btn,
-.submit-btn,
-.reset-btn {
-    transition: all 0.3s ease;
-}
-
-button:hover,
-.nav-btn:hover,
-.submit-btn:hover,
-.reset-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-form {
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-label {
-    margin-bottom: 12px;
-    display: block;
-    font-weight: 500;
-}
+/* =====================
+   Tabelas Simples
+===================== */
 
 table {
     border-radius: 8px;
@@ -536,76 +510,6 @@ thead th {
 tbody td {
     background-color: #ffffff;
     color: #4b5563;
-}
-
-.alert {
-    padding: 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.alert-success {
-    background-color: #34d399;
-    color: white;
-}
-
-.alert-error {
-    background-color: #ef4444;
-    color: white;
-}
-
-
-
-/* === Estilo Avançado === */
-button,
-.nav-btn,
-.submit-btn,
-.reset-btn {
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    font-weight: 600;
-}
-
-button:hover,
-.nav-btn:hover,
-.submit-btn:hover,
-.reset-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-form {
-    padding: 24px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
-
-label {
-    margin-bottom: 14px;
-    display: block;
-    font-weight: 500;
-    color: #374151;
-}
-
-input,
-select,
-textarea {
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #ffffff;
-    font-size: 14px;
-    color: #1f2937;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
 }
 
 table {
@@ -636,6 +540,93 @@ tr:hover td {
     background-color: #f9fafb;
 }
 
+/* =====================
+   Alertas Estilizados
+===================== */
+.alert {
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.alert-success {
+    background-color: #34d399;
+    color: white;
+}
+
+.alert-error {
+    background-color: #ef4444;
+    color: white;
+}
+
+/* =====================
+   Botões com animação  
+===================== */
+button,
+.nav-btn,
+.submit-btn,
+.reset-btn {
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+button:hover,
+.nav-btn:hover,
+.submit-btn:hover,
+.reset-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(4, 239, 239, 0.953);
+}
+
+/* =====================
+   Formulários Estilizados
+===================== */
+form {
+    padding: 24px;
+    background: none;
+}
+
+label {
+    margin-bottom: 14px;
+    display: block;
+    font-weight: 500;
+    color: #e0e0e0;
+}
+
+input,
+select,
+textarea {
+    padding: 10px;
+    border: 1px solid #70f1e5;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #3b828b1f, #2c4950);
+    font-size: 14px;
+    color: #ecf0f1;
+    box-shadow: 5px 5px 10px rgb(0 0 0 / 55%),
+        -5px -5px 10px rgba(52, 73, 94, 0.5);
+    transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #87c9f5;
+    box-shadow: 2px 6px 11px rgb(52 152 219 / 55%),
+        inset 3px 3px 6px rgb(0 0 0 / 28%),
+        inset -3px -3px 6px rgb(52 73 94 / 42%);
+}
+
+option {
+    background-color: #1f2937;
+    color: #ecf0f1;
+}
+
+/* =====================
+   Botões de Ação
+===================== */
 .actions button {
     padding: 8px 12px;
     font-size: 14px;
@@ -739,7 +730,6 @@ tr:hover td {
         font-weight: 700;
     }
 
-    
     #login:active {
         filter: brightness(.8);
         background: #7fffd4;
@@ -750,6 +740,9 @@ tr:hover td {
     .section {
         position: relative;
         z-index: -1 !important;
+        width: 146%;
+        left: -25%;
+        height: auto;
     }
 }
 

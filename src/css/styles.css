@@ -19,7 +19,8 @@
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -131,10 +132,10 @@ h2 {
    Seções
 ===================== */
 .section {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    background: rgba(10, 112, 100, 0.2);
+    backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(7, 188, 212, 0.551);
     margin: 20px 0;
     padding: 20px;
     border-radius: var(--radius);
@@ -183,7 +184,8 @@ section#inicio {
     display: inline-block;
     font-size: 18px;
     position: relative;
-    color: lightgray; /* cor das vazias */
+    color: lightgray;
+    /* cor das vazias */
 }
 
 .estrela.cheia {
@@ -194,7 +196,8 @@ section#inicio {
     background: linear-gradient(90deg, gold 50%, lightgray 50%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: gold; /* fallback */
+    color: gold;
+    /* fallback */
 }
 
 
@@ -299,10 +302,12 @@ th.asc::after {
     content: " ▲";
     color: #666;
 }
+
 th.desc::after {
     content: " ▼";
     color: #666;
 }
+
 th {
     user-select: none;
 }
@@ -312,36 +317,36 @@ th {
 ===================== */
 
 #login-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 #form-login {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
 }
 
 #form-login input {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }
 
 #form-login .submit-btn {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 #form-login .submit-btn:hover {
-  background-color: #45a049;
+    background-color: #45a049;
 }
 
 /* =====================
@@ -406,23 +411,47 @@ th {
 ===================== */
 .hamburger {
     display: none;
-    border: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
     background: none;
-    border-top: 3px solid #fff;
+    border: none;
     cursor: pointer;
+    z-index: 1002;
 }
 
-.hamburger::after,
-.hamburger::before {
-    content: " ";
+.hamburger span {
     display: block;
-    width: 30px;
     height: 3px;
-    background: #fff;
-    margin-top: 5px;
-    position: relative;
-    transition: 0.3s;
+    width: 100%;
+    background-color: white;
+    border-radius: 3px;
+    transition: all 0.3s ease;
 }
+
+/* =====================
+   Menu hamburguer
+   animado
+===================== */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.hamburger:hover span {
+    background-color: #7fffd4;
+    box-shadow: 0 0 8px #7fffd4;
+}
+
 
 /* =====================
    Scrollbar Customizado
@@ -441,35 +470,9 @@ th {
 }
 
 /* =====================
-   Responsividade
+   Feedback visual
 ===================== */
-@media (max-width: 800px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
 
-    .header-inner {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .nav {
-        width: 100%;
-        justify-content: flex-start;
-        gap: 6px;
-    }
-
-    .hamburger {
-        position: fixed;
-        top: 26px;
-        right: 16px;
-        display: block;
-        z-index: 1;
-    }
-}
-
-
-/* Feedback visual */
 .alert {
     padding: 12px;
     margin: 10px 0;
@@ -665,6 +668,89 @@ tr:hover td {
 .alert-error {
     background-color: #dc2626;
     color: white;
+}
+
+/* =====================
+   Responsividade
+===================== */
+@media (max-width: 800px) {
+
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hamburger {
+        display: flex;
+        position: absolute;
+        top: 22px;
+        right: 20px;
+        z-index: 1003;
+    }
+
+    .nav {
+        position: fixed;
+        top: -2px;
+        left: -2px;
+        right: 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 100px 20px 20px;
+        gap: 16px;
+        border-radius: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        z-index: 1002;
+        background: #1f2937;
+    }
+
+    .nav.open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .nav-btn {
+        width: 100%;
+        text-align: left;
+        padding: 14px 16px;
+        border: none;
+        border-bottom: 1px solid #7fffd4;
+        box-shadow: 1px 2px 0px #7fffd4;
+        color: white;
+        font-size: 1rem;
+    }
+
+    .nav-btn.active {
+        background: #7fffd4;
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    #login {
+        align-self: flex-end;
+    }
+
+    #login:active {
+        filter: brightness(.8);
+        background: #7fffd4;
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    
+    #login:active {
+        filter: brightness(.8);
+        background: #7fffd4;
+        color: #1f2937;
+        font-weight: 700;
+    }
+
+    .section {
+        position: relative;
+        z-index: -1 !important;
+    }
 }
 
 @media (max-width: 768px) {

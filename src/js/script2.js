@@ -212,17 +212,17 @@ function adicionarOuAtualizar(tipo) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dados)
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.erro) {
-            mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
-        } else {
-            mostrarMensagem(tipo, "✅ " + (data.mensagem || "Ação realizada com sucesso!"), true);
-            form.reset();
-            carregarDados(tipo);
-        }
-    })
-    .catch(err => mostrarMensagem(tipo, "❌ Erro de conexão com o servidor.", false));
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+            } else {
+                mostrarMensagem(tipo, "✅ " + (data.mensagem || "Ação realizada com sucesso!"), true);
+                form.reset();
+                carregarDados(tipo);
+            }
+        })
+        .catch(err => mostrarMensagem(tipo, "❌ Erro de conexão com o servidor.", false));
 }
 
 // Editar
@@ -249,16 +249,16 @@ function deletar(tipo, id) {
         fetch(`http://localhost:3000/api/${tipo}/${id}`, {
             method: 'DELETE'
         })
-        .then(res => res.json())
-        .then(data => {
-             if (data.erro) {
-                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
-            } else {
-                mostrarMensagem(tipo, "🗑️ " + (data.mensagem || "Registo eliminado com sucesso."), true);
-                carregarDados(tipo);
-            }
-        })
-        .catch(err => mostrarMensagem(tipo, "❌ Erro de conexão com o servidor.", false));
+            .then(res => res.json())
+            .then(data => {
+                if (data.erro) {
+                    mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+                } else {
+                    mostrarMensagem(tipo, "🗑️ " + (data.mensagem || "Registo eliminado com sucesso."), true);
+                    carregarDados(tipo);
+                }
+            })
+            .catch(err => mostrarMensagem(tipo, "❌ Erro de conexão com o servidor.", false));
     }
 }
 
@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             carregarDados('avaliacoes');
         });
     });
-    
+
 });
 
 
@@ -385,9 +385,31 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Menu hamburguer
-const hamburger = document.querySelector(".hamburger");
-const nav = document.querySelector(".nav");
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navButtons = document.querySelectorAll('.nav-btn');
 
-if (hamburger && nav) {
-    hamburger.addEventListener("click", () => nav.classList.toggle("active"));
-}
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('open');
+        });
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+               navButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Fecha o menu ao clicar em um botão de navegação
+        // document.querySelectorAll('.nav-btn').forEach(btn => {
+        //   btn.addEventListener('click', () => {
+        //     navMenu.classList.remove('open');
+        //     menuToggle.classList.remove('active');
+        //   });
+        // });
+
+    }
+});

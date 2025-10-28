@@ -272,45 +272,61 @@ textarea {
     filter: brightness(.95);
 }
 
+
 /* =====================
    Tabelas
 ===================== */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 12px;
+    margin-top: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #3b828b1f, #3b828b1f);
+    box-shadow: 5px 5px 10px rgb(0 0 0 / 55%),
+        -5px -5px 10px rgba(52, 73, 94, 0.5);
+    color: #ecf0f1;
 }
 
 thead th {
-    background: #f8fafc;
-    padding: 10px;
+    background: linear-gradient(145deg, #2c4950, #3b828b1f);
+    color: #ecf0f1;
+    font-weight: 600;
+    padding: 12px;
     text-align: left;
-    font-size: 13px;
-    color: var(--muted);
+    border-bottom: 1px solid #70f1e5;
 }
 
 tbody td {
+    background: linear-gradient(145deg, #2c4950, #3b828b1f);
+    color: #ecf0f1;
     padding: 12px;
-    border-top: 1px solid #eef2f7;
+    border-top: 1px solid #70f1e5;
+    transition: all 0.3s ease;
 }
 
 tr:hover td {
-    background: linear-gradient(90deg, rgba(32, 103, 237, 0.03), transparent);
+    box-shadow: #00ffe1 2px 2px 8px;
+    cursor: pointer;
 }
+
 
 th.asc::after {
     content: " ▲";
-    color: #666;
+    color: #2196F3;
+    text-shadow: #009688 2px 2px 8px;
 }
 
 th.desc::after {
     content: " ▼";
-    color: #666;
+    color: #2196F3;
+    text-shadow: #009688 2px 2px 8px;
 }
 
 th {
     user-select: none;
 }
+
 
 /* =====================
    Login Section
@@ -491,54 +507,8 @@ th {
 }
 
 
-/* =====================
-   Tabelas Simples
-===================== */
 
-table {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
 
-thead th {
-    background-color: #e2e8f0;
-    color: #374151;
-    font-weight: 600;
-}
-
-tbody td {
-    background-color: #ffffff;
-    color: #4b5563;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 16px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-thead th {
-    background-color: #f3f4f6;
-    color: #1f2937;
-    font-weight: 600;
-    padding: 12px;
-    text-align: left;
-}
-
-tbody td {
-    background-color: #ffffff;
-    color: #4b5563;
-    padding: 12px;
-    border-top: 1px solid #e5e7eb;
-}
-
-tr:hover td {
-    background-color: #f9fafb;
-}
 
 /* =====================
    Alertas Estilizados
@@ -660,6 +630,7 @@ option {
     background-color: #dc2626;
     color: white;
 }
+
 
 /* =====================
    Responsividade

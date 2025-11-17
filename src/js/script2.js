@@ -24,12 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
 async function carregarDados(tipo) {
     try {
         const res = await fetch(`http://localhost:3000/api/${tipo}`);
-        const dadosAPI = await res.json();
-        dados[tipo] = dadosAPI;
+        let dadosAPI = await res.json();
 
+        // FILTRAR DADOS PARA USER COMUM
+        if (userLogado && userLogado.tipo.toLowerCase() !== 'admin') {
+            switch (tipo) {
+                case 'emprestimos':
+                    // só os empréstimos do próprio user
+                    dadosAPI = dadosAPI.filter(e => e.id_utilizador === userLogado.id_utilizador);
+                    break;
+                case 'avaliacoes':
+                    // avaliacoes do user sobre os livros que leu + todas as dos outros em todos os livros
+                    dadosAPI = dadosAPI.map(av => {
+                        if (av.id_utilizador === userLogado.id_utilizador) {
+                            return av; // avaliacoes próprias
+                        } else {
+                            // aqui mostra todas as avaliacoes dos outros em todos os livros
+                            return av;
+                        }
+                    });
+                    break;
+                // livros e inicio permanecem completos
+            }
+        }
+
+        dados[tipo] = dadosAPI;
         preencherTabela(tipo, dadosAPI);
 
-        // Atualizar selects automaticamente
+        // Atualizar selects
         switch (tipo) {
             case 'autores':
                 preencherSelect('livro-autor_id', dadosAPI, 'id_autor', 'nome_autor', 'Selecione um autor');
@@ -51,6 +73,7 @@ async function carregarDados(tipo) {
         console.error(`Erro ao carregar ${tipo}:`, error);
     }
 }
+
 
 // Função genérica para preencher selects
 function preencherSelect(selectId, dadosArray, idCampo, nomeCampo, textoDefault = 'Selecione') {
@@ -99,6 +122,14 @@ function gerarEstrelas(qtd) {
 
 // Função que gera HTML da linha da tabela
 function gerarLinha(tipo, item) {
+
+    const tipoUser = {
+        1: 'Admin',
+        2: 'Aluno',
+        3: 'Professor',
+        4: 'Outro' // se houver mais tipos
+    };
+
     const lookup = {
         livros: () => `
             <td>${item.titulo}</td>
@@ -413,3 +444,120 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 });
+
+let userLogado = null;
+
+async function fazerLogin() {
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+    const erroMsg = document.getElementById('login-erro');
+
+    try {
+        const res = await fetch('http://localhost:3000/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, senha })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            userLogado = data.user; // Guarda info do login
+            erroMsg.style.display = 'none';
+            alert(`Bem-vindo(a) ${userLogado.nome_utilizador} (${userLogado.tipo})`);
+
+            atualizarMenuPorTipo();
+            atualizarPermissoesFormulario();
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('inicio').classList.remove('hidden');
+
+        } else {
+            erroMsg.style.display = 'block';
+            erroMsg.textContent = data.mensagem || 'Credenciais inválidas. Tente novamente.';
+        }
+    } catch (err) {
+        console.error(err);
+        erroMsg.style.display = 'block';
+        erroMsg.textContent = 'Erro no servidor. Tente novamente mais tarde.';
+    }
+}
+
+function atualizarMenuPorTipo() {
+    if (!userLogado) return;
+
+    document.querySelectorAll('nav .nav-btn').forEach(btn => {
+        if (btn.id === 'login') { // mantém sempre visível
+            btn.style.display = 'inline-block';
+            return;
+        }
+
+        const section = btn.dataset.section;
+
+        if (userLogado.tipo.toLowerCase() === 'admin') {
+            btn.style.display = 'inline-block';
+        } else {
+            if (['inicio','livros','emprestimos','avaliacoes'].includes(section)) {
+                btn.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+    });
+}
+
+
+
+function atualizarPermissoesFormulario() {
+    if (!userLogado) return;
+
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        // deixa login e avaliação visíveis para todos
+        if (['form-login', 'form-avaliacoes'].includes(form.id)) {
+            form.style.display = 'block';
+            return;
+        }
+
+        if (userLogado.tipo.toLowerCase() !== 'admin') {
+            form.style.display = 'none';
+        } else {
+            form.style.display = 'block';
+        }
+    });
+}
+
+
+document.getElementById('login').addEventListener('click', () => {
+    if (userLogado) {
+        // usuário logado → mostrar painel
+        document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+        document.getElementById('painel-usuario').classList.remove('hidden');
+
+        // preencher dados do usuário
+        document.getElementById('user-nome').textContent = userLogado.nome_utilizador;
+        document.getElementById('user-email').textContent = userLogado.email;
+        document.getElementById('user-tipo').textContent = userLogado.tipo;
+
+        carregarPainelUsuario(); // histórico de empréstimos e avaliações
+    } else {
+        // não logado → mostrar seção de login
+        document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+        document.getElementById('login-section').classList.remove('hidden');
+    }
+});
+
+
+document.getElementById('logout-btn').addEventListener('click', () => {
+    userLogado = null;
+    alert('Sessão encerrada.');
+
+    // volta para a tela inicial ou login
+    document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+    document.getElementById('inicio').classList.remove('hidden');
+
+    atualizarMenuPorTipo(); // atualiza visibilidade do menu
+});
+
+
+
+

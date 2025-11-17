@@ -149,12 +149,14 @@ app.delete('/api/categorias/:id', (req, res) => {
 // -------- UTILIZADORES --------
 app.get('/api/utilizadores', (req, res) => {
     const sql = `
-        SELECT u.*, 
-            COUNT(e.id_emprestimo) AS livros_emprestados,
-            SUM(CASE WHEN e.id_emprestimo IS NOT NULL AND e.data_devolucao IS NULL THEN 1 ELSE 0 END) AS livros_nao_devolvidos
+     SELECT u.id_utilizador, u.nome_utilizador, u.email, c.tipo,
+       COUNT(e.id_emprestimo) AS livros_emprestados,
+       SUM(CASE WHEN e.id_emprestimo IS NOT NULL AND e.data_devolucao IS NULL THEN 1 ELSE 0 END) AS livros_nao_devolvidos
         FROM utilizadores u
+        JOIN contas c ON u.id_conta = c.id_conta
         LEFT JOIN emprestimos e ON u.id_utilizador = e.utilizador_id
-        GROUP BY u.id_utilizador
+        GROUP BY u.id_utilizador, c.tipo
+
     `;
     db.query(sql, (err, results) => {
         if (err) return res.status(500).json({ erro: err });
@@ -164,17 +166,17 @@ app.get('/api/utilizadores', (req, res) => {
 
 
 app.post('/api/utilizadores', (req, res) => {
-    const { nome, email, tipo } = req.body;
-    db.query('INSERT INTO utilizadores (nome_utilizador, email, tipo) VALUES (?, ?, ?)',
-        [nome, email, tipo],
+    const { nome, email, id_conta  } = req.body;
+    db.query('INSERT INTO utilizadores (nome_utilizador, email, id_conta) VALUES (?, ?, ?)',
+    [nome, email, id_conta],
         err => err ? res.status(500).json({erro: err}) : res.json({mensagem:'Utilizador adicionado'})
     );
 });
 
 app.put('/api/utilizadores/:id', (req, res) => {
-    const { nome, email, tipo } = req.body;
+    const { nome, email, id_conta } = req.body;
     db.query('UPDATE utilizadores SET nome_utilizador=?, email=?, tipo=? WHERE id_utilizador=?',
-        [nome, email, tipo, req.params.id],
+        [nome, email, id_conta, req.params.id],
         err => err ? res.status(500).json({erro: err}) : res.json({mensagem:'Utilizador atualizado'})
     );
 });
@@ -316,6 +318,26 @@ app.get('/api/contas', (req, res) => {
         res.json(results);
     });
 });
+
+// -------- LOGIN --------
+app.post('/api/login', (req, res) => {
+    const { email, senha } = req.body;
+
+    const sql = 'SELECT u.id_utilizador, u.nome_utilizador, c.tipo FROM utilizadores u JOIN contas c ON u.id_conta = c.id_conta WHERE u.email = ? AND u.senha = ?';
+    
+    db.query(sql, [email, senha], (err, results) => {
+        if (err) return res.status(500).json({ erro: err });
+
+        if (results.length === 0) {
+            return res.status(401).json({ mensagem: 'Email ou senha incorretos' });
+        }
+
+        // Se quiseres, podes retornar info do utilizador
+        const user = results[0];
+        res.json({ mensagem: 'Login efetuado com sucesso!', user });
+    });
+});
+
 
 // ---- INICIAR SERVIDOR ----
 // Servir o HTML principal

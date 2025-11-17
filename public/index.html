@@ -18,15 +18,11 @@
 <body>
     <header>
         <div class="container header-inner">
+
             <h1>Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span></h1>
-
-            <button class="hamburger" id="menu-toggle" aria-label="Abrir menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
-            <nav aria-label="Seções da biblioteca" class="nav" id="nav-menu">
+            <!-- <button id="menu-toggle" aria-label="Alternar menu">☰</button>-->
+            <button class="hamburger"></button>
+            <nav aria-label="Seções da biblioteca" class="nav">
                 <button class="nav-btn" data-section="inicio" title="Página inicial">🏠 Início</button>
                 <button class="nav-btn" data-section="livros">📚 Livros</button>
                 <button class="nav-btn" data-section="autores">🖋️ Autores</button>
@@ -36,6 +32,7 @@
                 <button class="nav-btn" data-section="avaliacoes">⭐ Avaliações</button>
                 <button title="Login" id="login" class="nav-btn" data-section="login-section"></button>
             </nav>
+
         </div>
     </header>
 
@@ -45,40 +42,36 @@
         <section id="inicio" class="section visible">
             <h2>Bem-vindo à Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span> 🏠</h2>
             <p>Descubra livros, autores e categorias — explore e mantenha viva a magia da leitura!</p>
-
+    
             <h3>O que podes fazer aqui:</h3>
             <ul>
-                <li>📚 Consultar a lista completa de <strong>livros</strong> disponíveis, com informação detalhada sobre
-                    autor, categoria e ano de publicação.</li>
-                <li>✍️ Adicionar ou editar <strong>autores</strong> e <strong>categorias</strong> para manter a
-                    biblioteca organizada.</li>
+                <li>📚 Consultar a lista completa de <strong>livros</strong> disponíveis, com informação detalhada sobre autor, categoria e ano de publicação.</li>
+                <li>✍️ Adicionar ou editar <strong>autores</strong> e <strong>categorias</strong> para manter a biblioteca organizada.</li>
                 <li>👥 Gerir <strong>utilizadores</strong> e verificar quantos livros cada um tem emprestados.</li>
                 <li>📖 Registar <strong>empréstimos</strong> e controlar quais livros ainda não foram devolvidos.</li>
                 <li>⭐ Avaliar livros:
                     <ul>
                         <li>Alunos e professores podem adicionar avaliações apenas para os livros que emprestaram.</li>
-                        <li>Funcionários/Outros podem gerir todas as avaliações, mas não podem alterar ou eliminar
-                            avaliações de outros utilizadores.</li>
+                        <li>Funcionários/Outros podem gerir todas as avaliações, mas não podem alterar ou eliminar avaliações de outros utilizadores.</li>
                     </ul>
                 </li>
             </ul>
-
+            
             <h3>Dicas para navegar:</h3>
             <ul>
                 <li>Use os botões do menu no topo para aceder rapidamente a cada secção da biblioteca.</li>
-                <li>Clique em <strong>Editar</strong> ou <strong>Excluir</strong> para gerir registos diretamente nas
-                    tabelas (consoante as permissões do seu tipo de utilizador).</li>
+                <li>Clique em <strong>Editar</strong> ou <strong>Excluir</strong> para gerir registos diretamente nas tabelas (consoante as permissões do seu tipo de utilizador).</li>
                 <li>Preencha todos os campos obrigatórios nos formulários para evitar erros.</li>
                 <li>Os livros com disponibilidade <strong>Não</strong> estão atualmente emprestados.</li>
             </ul>
-
+            
             <h3>Estatísticas rápidas:</h3>
             <ul>
                 <li>📖 Total de livros: <span id="total-livros">0</span></li>
                 <li>👥 Total de utilizadores: <span id="total-utilizadores">0</span></li>
                 <li>📝 Total de avaliações registadas: <span id="total-avaliacoes">0</span></li>
             </ul>
-
+            
             <p>Comece explorando a biblioteca e descubra o seu próximo livro favorito! 🔎</p>
         </section>
 
@@ -160,7 +153,7 @@
 
         <!-- Seção para Utilizadores -->
         <section id="utilizadores" class="section hidden">
-            <h2>👤 Utilizadores</h2>
+            <h2>👤  Utilizadores</h2>
             <p id="utilizadores-mensagem" style="color: red; display: none;"></p>
             <form id="form-utilizadores" onsubmit="return false;">
                 <input type="hidden" id="utilizador-id">
@@ -241,7 +234,7 @@
             </table>
         </section>
 
-
+        
         <!-- Seção de Login -->
         <section id="login-section" class="section">
             <h2>Iniciar Sessão</h2>
@@ -254,11 +247,23 @@
                 </label>
                 <button class="submit-btn" onclick="fazerLogin()">Entrar</button>
             </form>
-            <p id="login-erro" style="color: red; display: none;">Credenciais inválidas. Tente novamente.</p>
+            <p id="login-erro" style="color: rgb(206, 222, 32); display: none;">Credenciais inválidas. Tente novamente.</p>
         </section>
 
-    </main>
+        <!-- <section id="painel-usuario" class="section hidden">
+        <h2>👤 Painel do Usuário</h2>
+        <p id="painel-mensagem" style="color: red; display: none;"></p>
 
+        <div class="user-info">
+            <p><strong>Nome:</strong> <span id="user-nome"></span></p>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>Tipo:</strong> <span id="user-tipo"></span></p>
+        </div>
+
+        <button id="logout-btn">Sair</button>
+        </section> -->
+
+    </main>
 
 </body>
 

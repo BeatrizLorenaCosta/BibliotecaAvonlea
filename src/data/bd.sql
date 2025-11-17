@@ -33,12 +33,31 @@ CREATE TABLE livros (
     FOREIGN KEY (categoria_id) REFERENCES categorias(id_categoria)
 );
 
+CREATE TABLE contas (
+    id_conta INT PRIMARY KEY,
+    tipo VARCHAR(10) NOT NULL
+);
+
+INSERT INTO contas (id_conta ,tipo ) VALUES
+(1, 'ADMIN'),
+(2, 'ALUNO'),
+(3, 'PROFESSOR');
+
 CREATE TABLE utilizadores (
     id_utilizador INT AUTO_INCREMENT PRIMARY KEY,
     nome_utilizador VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
-    tipo ENUM('aluno','professor','outro') NOT NULL
+    senha TEXT NOT NULL,
+    id_conta INT NOT NULL,
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_conta) REFERENCES contas(id_conta)
 );
+
+INSERT INTO utilizadores (nome_utilizador, email, senha, id_conta)
+VALUES 
+('Admin', 'admin@gmail.com','admin123', 1),
+('Ana Silva', 'ana.silva@email.com','ana123', 2),
+('Carlos Mendes', 'carlos.mendes@email.com', 'carlos123', 3),
 
 CREATE TABLE emprestimos (
     id_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
@@ -58,14 +77,6 @@ CREATE TABLE avaliacoes (
     utilizador_id INT NOT NULL,
     FOREIGN KEY (livro_id) REFERENCES livros(id_livro),
     FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador)
-);
-
-CREATE TABLE contas (
-    id_conta INT PRIMARY KEY AUTO_INCREMENT,
-    utilizador_id INT NOT NULL,
-    senha TEXT NOT NULL,
-    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador) ON DELETE CASCADE
 );
 
 
@@ -93,11 +104,7 @@ VALUES
 ('Autoajuda', 'Livros que oferecem conselhos para desenvolvimento pessoal'),
 ('Clássicos', 'Obras reconhecidas como importantes na literatura universal');
 
-INSERT INTO utilizadores (nome_utilizador, email, tipo)
-VALUES 
-('Ana Silva', 'ana.silva@email.com', 'aluno'),
-('Carlos Mendes', 'carlos.mendes@email.com', 'professor'),
-('Joana Costa', 'joana.costa@email.com', 'outro');
+
 
 INSERT INTO livros (titulo, autor_id, categoria_id, ano, disponivel)
 VALUES 
@@ -111,9 +118,6 @@ VALUES
 (2, 2, 'Interessante, mas um pouco lento.', 3),
 (3, 3, 'Obra-prima da literatura brasileira.', 5);
 
-INSERT INTO contas (utilizador_id, senha) VALUES
-(1, '12345'),
-(2, '12345'),
-(3, 'admin');
+
 
 

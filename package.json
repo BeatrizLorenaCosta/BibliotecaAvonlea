@@ -2,8 +2,9 @@
   "name": "pis",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/js/server.js",
   "scripts": {
+    "start": "node src/js/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,7 +12,7 @@
     "url": "git+https://github.com/Tizy2005/PIS.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Beatriz Costa , David Pereira",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {

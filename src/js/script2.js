@@ -468,8 +468,11 @@ async function fazerLogin() {
 
             atualizarMenuPorTipo();
             atualizarPermissoesFormulario();
+            document.getElementById('login-section').classList.remove('visible');
             document.getElementById('login-section').classList.add('hidden');
+            
             document.getElementById('inicio').classList.remove('hidden');
+            document.getElementById('inicio').classList.add('visible');
 
         } else {
             erroMsg.style.display = 'block';

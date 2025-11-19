@@ -12,6 +12,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     <script src="/src/js/script2.js"></script>
 </head>
 
@@ -24,13 +27,13 @@
             <button class="hamburger"></button>
             <nav aria-label="Seções da biblioteca" class="nav">
                 <button class="nav-btn" data-section="inicio" title="Página inicial">🏠 Início</button>
-                <button class="nav-btn" data-section="livros">📚 Livros</button>
-                <button class="nav-btn" data-section="autores">🖋️ Autores</button>
-                <button class="nav-btn" data-section="categorias">🗂️ Categorias</button>
-                <button class="nav-btn" data-section="utilizadores">👤 Utilizadores</button>
-                <button class="nav-btn" data-section="emprestimos">📖 Empréstimos</button>
-                <button class="nav-btn" data-section="avaliacoes">⭐ Avaliações</button>
-                <button title="Login" id="login" class="nav-btn" data-section="login-section"></button>
+                <button class="nav-btn" data-section="livros">Livros</button>
+                <button class="nav-btn" data-section="autores">Autores</button>
+                <button class="nav-btn" data-section="categorias">Categorias</button>
+                <button class="nav-btn" data-section="utilizadores">Utilizadores</button>
+                <button class="nav-btn" data-section="emprestimos">Empréstimos</button>
+                <button class="nav-btn" data-section="avaliacoes">Avaliações</button>
+                <button title="Login" id="login" class="login-btn" data-section="login-section"></button>
             </nav>
 
         </div>
@@ -40,20 +43,16 @@
 
         <!-- Seção de Início -->
         <section id="inicio" class="section visible">
-            <h2>Bem-vindo à Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span> 🏠</h2>
-            <p>Descubra livros, autores e categorias — explore e mantenha viva a magia da leitura!</p>
+            <h2>Bem-vindo à Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span> 🌿</h2>
+            <p>Aqui, cada livro é uma porta; cada autor, um universo à espera de ser explorado. Entre, respire o aroma das páginas e descubra o poder das histórias que esperam por si.</p>
     
-            <h3>O que podes fazer aqui:</h3>
+            <!-- <h3>O que podes fazer aqui:</h3>
             <ul>
-                <li>📚 Consultar a lista completa de <strong>livros</strong> disponíveis, com informação detalhada sobre autor, categoria e ano de publicação.</li>
+                <li>📚 Explorar os livros — veja títulos, autores, categorias e anos de publicação. Cada detalhe é um fio que te liga à história.</li>
                 <li>✍️ Adicionar ou editar <strong>autores</strong> e <strong>categorias</strong> para manter a biblioteca organizada.</li>
                 <li>👥 Gerir <strong>utilizadores</strong> e verificar quantos livros cada um tem emprestados.</li>
                 <li>📖 Registar <strong>empréstimos</strong> e controlar quais livros ainda não foram devolvidos.</li>
-                <li>⭐ Avaliar livros:
-                    <ul>
-                        <li>Alunos e professores podem adicionar avaliações apenas para os livros que emprestaram.</li>
-                        <li>Funcionários/Outros podem gerir todas as avaliações, mas não podem alterar ou eliminar avaliações de outros utilizadores.</li>
-                    </ul>
+                <li>⭐ Avaliar livros e ler comentários para ajudar outros leitores a escolher suas próximas leituras.
                 </li>
             </ul>
             
@@ -72,13 +71,13 @@
                 <li>📝 Total de avaliações registadas: <span id="total-avaliacoes">0</span></li>
             </ul>
             
-            <p>Comece explorando a biblioteca e descubra o seu próximo livro favorito! 🔎</p>
+            <p>Comece explorando a biblioteca e descubra o seu próximo livro favorito! 🔎</p> -->
         </section>
 
 
         <!-- Seção para Livros -->
         <section id="livros" class="section">
-            <h2>📚 Livros</h2>
+            <h2 class="nomeSection">Livros</h2>
             <p id="livros-mensagem" style="color: red; display: none;"></p>
             <form id="form-livros" onsubmit="return false;">
                 <input type="hidden" id="livro-id">
@@ -107,7 +106,7 @@
 
         <!-- Seção para Autores -->
         <section id="autores" class="section hidden">
-            <h2>🖋️ Autores</h2>
+            <h2>Autores</h2>
             <p id="autores-mensagem" style="color: red; display: none;"></p>
             <form id="form-autores" onsubmit="return false;">
                 <input type="hidden" id="autor-id">
@@ -131,7 +130,7 @@
 
         <!-- Seção para Categorias -->
         <section id="categorias" class="section hidden">
-            <h2>🗂️ Categorias</h2>
+            <h2>Categorias</h2>
             <p id="categorias-mensagem" style="color: red; display: none;"></p>
             <form id="form-categorias" onsubmit="return false;">
                 <input type="hidden" id="categoria-id">
@@ -153,7 +152,7 @@
 
         <!-- Seção para Utilizadores -->
         <section id="utilizadores" class="section hidden">
-            <h2>👤  Utilizadores</h2>
+            <h2>Utilizadores</h2>
             <p id="utilizadores-mensagem" style="color: red; display: none;"></p>
             <form id="form-utilizadores" onsubmit="return false;">
                 <input type="hidden" id="utilizador-id">
@@ -183,7 +182,7 @@
 
         <!-- Seção para Empréstimos (Extra) -->
         <section id="emprestimos" class="section hidden">
-            <h2>📖 Empréstimos</h2>
+            <h2 class="nomeSection">Empréstimos</h2>
             <p id="emprestimos-mensagem" style="color: red; display: none;"></p>
             <form id="form-emprestimos" onsubmit="return false;">
                 <input type="hidden" id="emprestimo-id">
@@ -209,7 +208,7 @@
 
         <!-- Seção para Avaliações (Extra) -->
         <section id="avaliacoes" class="section hidden">
-            <h2>⭐ Avaliações</h2>
+            <h2 class="nomeSection">Avaliações</h2>
             <p id="avaliacoes-mensagem" style="color: red; display: none;"></p>
             <form id="form-avaliacoes" onsubmit="return false;">
                 <input type="hidden" id="avaliacao-id">
@@ -237,7 +236,7 @@
         
         <!-- Seção de Login -->
         <section id="login-section" class="section">
-            <h2>Iniciar Sessão</h2>
+            <h2 class="nomeSection">Iniciar Sessão</h2>
             <form id="form-login" onsubmit="return false;">
                 <label>Email:
                     <input type="email" id="login-email" placeholder="Insira o seu email" required>

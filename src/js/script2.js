@@ -429,19 +429,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         navButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-               navButtons.forEach(b => b.classList.remove('active'));
+                navButtons.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
             });
         });
 
-        // Fecha o menu ao clicar em um botão de navegação
-        // document.querySelectorAll('.nav-btn').forEach(btn => {
-        //   btn.addEventListener('click', () => {
-        //     navMenu.classList.remove('open');
-        //     menuToggle.classList.remove('active');
-        //   });
-        // });
-
+        // Listener específico para o botão de login
+        const loginBtn = document.getElementById('login');
+        loginBtn.addEventListener('click', () => {
+            navButtons.forEach(b => b.classList.remove('active')); // remove active dos outros
+            loginBtn.classList.add('active'); // ativa o login
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('visible');
+            });
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('login-section').classList.add('visible');
+        });
     }
 });
 

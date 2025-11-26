@@ -24,7 +24,6 @@
 
             <h1>Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span></h1>
             <!-- <button id="menu-toggle" aria-label="Alternar menu">☰</button>-->
-            <button class="hamburger"></button>
             <nav aria-label="Seções da biblioteca" class="nav">
                 <button class="nav-btn" data-section="inicio" title="Página inicial">🏠 Início</button>
                 <button class="nav-btn" data-section="livros">Livros</button>
@@ -34,6 +33,7 @@
                 <button class="nav-btn" data-section="emprestimos">Empréstimos</button>
                 <button class="nav-btn" data-section="avaliacoes">Avaliações</button>
                 <button title="Login" id="login" class="nav-btn login-btn" data-section="login-section"></button>
+                <button id="logout-btn" class="submit-btn" onclick="sairLogin()" >Sair</button>
             </nav>
 
         </div>
@@ -223,10 +223,15 @@
                 <thead>
                     <tr>
                         <th>Livro</th>
+                        <th>Autor</th>
+                        <th>Ano</th>
+                        <th>Media das classificações</th>
+
+                        <!-- <th>Livro</th>
                         <th>Utilizador</th>
                         <th>Comentário</th>
                         <th>Classificação</th>
-                        <th>Ações</th>
+                        <th>Ações</th> -->
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -244,24 +249,10 @@
                 <label>Senha:
                     <input type="password" id="login-senha" placeholder="Insira a sua senha" required>
                 </label>
-                <button class="submit-btn" onclick="fazerLogin()">Entrar</button>
+                <button  class="submit-btn" onclick="fazerLogin()">Entrar</button>
             </form>
             <p id="login-erro" style="color: rgb(206, 222, 32); display: none;">Credenciais inválidas. Tente novamente.</p>
         </section>
-
-        <!-- <section id="painel-usuario" class="section hidden">
-        <h2>👤 Painel do Usuário</h2>
-        <p id="painel-mensagem" style="color: red; display: none;"></p>
-
-        <div class="user-info">
-            <p><strong>Nome:</strong> <span id="user-nome"></span></p>
-            <p><strong>Email:</strong> <span id="user-email"></span></p>
-            <p><strong>Tipo:</strong> <span id="user-tipo"></span></p>
-        </div>
-
-        <button id="logout-btn">Sair</button>
-        </section> -->
-
     </main>
 
 </body>

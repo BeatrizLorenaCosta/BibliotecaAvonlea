@@ -9,108 +9,17 @@ let dados = {
     avaliacoes: []
 };
 
-
-let userLogado = null;
-
 document.addEventListener('DOMContentLoaded', () => {
-
-    // =======================
-    // NAVEGAÇÃO ENTRE SEÇÕES
-    // =======================
-    const navButtons = document.querySelectorAll('.nav-btn');
-    navButtons.forEach(btn => {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            const allSections = document.querySelectorAll('.section');
-            allSections.forEach(sec => {
-                sec.classList.add('hidden');
-                sec.classList.remove('visible');
-            });
-
-            const target = document.getElementById(btn.dataset.section);
-            target.classList.remove('hidden');
-
-            // Animação
-            requestAnimationFrame(() => {
-                setTimeout(() => target.classList.add('visible'), 50);
-            });
-
+            document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById(btn.dataset.section).classList.remove('hidden');
             carregarDados(btn.dataset.section);
             atualizarEstatisticas();
-
-            // Atualiza classe active do menu
-            navButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
         });
     });
-
-    // =======================
-    // LOGIN
-    // =======================
-    const loginBtn = document.getElementById('login');
-    loginBtn.addEventListener('click', () => {
-    if (!userLogado) {
-        navButtons.forEach(b => b.classList.remove('active'));
-        loginBtn.classList.add('active');
-
-        document.querySelectorAll('.section').forEach(sec => {
-            sec.classList.add('hidden');
-            sec.classList.remove('visible');
-        });
-        document.getElementById('login-section').classList.remove('hidden');
-        requestAnimationFrame(() => {
-            setTimeout(() => document.getElementById('login-section').classList.add('visible'), 50);
-        });
-    }
+    document.getElementById('logout-btn').style.display = 'none';
 });
-
-    // =======================
-    // LOGOUT
-    // =======================
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) logoutBtn.style.display = 'none';
-
-    // =======================
-    // MENU HAMBURGUER
-    // =======================
-    const menuToggle = document.getElementById('menu-toggle');
-    const navMenu = document.getElementById('nav-menu');
-    if (menuToggle && navMenu) {
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            navMenu.classList.toggle('open');
-        });
-    }
-    // =======================
-    // TABELAS ORDENÁVEIS
-    // =======================
-    document.querySelectorAll('table').forEach(tabela => {
-        const ths = tabela.querySelectorAll('thead th');
-        ths.forEach((th, indice) => {
-            if (th.textContent.trim().toLowerCase() === 'ações') return;
-            th.style.cursor = 'pointer';
-            th.addEventListener('click', () => {
-                const tipo = tabela.id.replace('tabela-', '');
-                ordenarTabela(tipo, indice, th);
-            });
-        });
-    });
-
-    // =======================
-    // CARREGAR DADOS INICIAIS
-    // =======================
-    ['autores', 'categorias', 'livros', 'utilizadores', 'emprestimos', 'avaliacoes'].forEach(tipo => {
-        carregarDados(tipo);
-    });
-
-    // =======================
-    // ATUALIZAR ESTATÍSTICAS
-    // =======================
-    atualizarEstatisticas();
-
-    atualizarMenuPorTipo();
-    atualizarPermissoesFormulario();
-});
-
 
 // Função genérica para carregar dados
 async function carregarDados(tipo) {
@@ -210,6 +119,8 @@ function gerarEstrelas(qtd) {
     return estrelasHTML;
 }
 
+
+
 // Função que gera HTML da linha da tabela
 function gerarLinha(tipo, item) {
 
@@ -302,6 +213,7 @@ function mostrarMensagem(tipo, texto, sucesso = true) {
     }, 4000);
 }
 
+
 // Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
     const form = document.getElementById(`form-${tipo}`);
@@ -382,6 +294,62 @@ function deletar(tipo, id) {
     }
 }
 
+// Animação de seções »»»
+document.addEventListener('DOMContentLoaded', () => {
+    carregarDados('autores');
+    carregarDados('categorias');
+    carregarDados('livros');
+    carregarDados('utilizadores');
+    carregarDados('emprestimos');
+    carregarDados('avaliacoes');
+
+    const sections = document.querySelectorAll('.nav-btn');
+    sections.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const allSections = document.querySelectorAll('.section');
+            // esconde todas e remove 'visible' para permitir re-play da animação
+            allSections.forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('visible');
+            });
+
+            const target = document.getElementById(btn.dataset.section);
+            target.classList.remove('hidden');
+
+            // forçar reflow / adicionar pequeno delay para que a transição seja aplicada novamente
+            requestAnimationFrame(() => {
+                setTimeout(() => target.classList.add('visible'), 50);
+            });
+
+            carregarDados('autores');
+            carregarDados('categorias');
+            carregarDados('livros');
+            carregarDados('utilizadores');
+            carregarDados('emprestimos');
+            carregarDados('avaliacoes');
+        });
+    });
+
+});
+
+
+// Inicializa ordenação para todas as tabelas
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('table').forEach(tabela => {
+        const ths = tabela.querySelectorAll('thead th');
+        ths.forEach((th, indice) => {
+            // Ignora a coluna "Ações"
+            if (th.textContent.trim().toLowerCase() === 'ações') return;
+
+            th.style.cursor = 'pointer';
+            th.addEventListener('click', () => {
+                const tipo = tabela.id.replace('tabela-', '');
+                ordenarTabela(tipo, indice, th);
+            });
+        });
+    });
+});
+
 // Função genérica para ordenar uma tabela
 function ordenarTabela(tipo, indice, th) {
     const tabela = document.getElementById(`tabela-${tipo}`);
@@ -443,6 +411,46 @@ function atualizarEstatisticas() {
         .catch(err => console.error('Erro ao buscar avaliações:', err));
 }
 
+// Chama a função ao carregar a página
+window.addEventListener('DOMContentLoaded', () => {
+    atualizarEstatisticas();
+});
+
+// Menu hamburguer
+document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    const navButtons = document.querySelectorAll('.nav-btn');
+
+    if (menuToggle && navMenu) {
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('open');
+        });
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Listener específico para o botão de login
+        const loginBtn = document.getElementById('login');
+        loginBtn.addEventListener('click', () => {
+            navButtons.forEach(b => b.classList.remove('active')); // remove active dos outros
+            loginBtn.classList.add('active'); // ativa o login
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('visible');
+            });
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('login-section').classList.add('visible');
+        });
+    }
+});
+
+let userLogado = null;
 
 async function fazerLogin() {
     const email = document.getElementById('login-email').value;
@@ -465,12 +473,11 @@ async function fazerLogin() {
 
             atualizarMenuPorTipo();
             atualizarPermissoesFormulario();
-                
             document.getElementById('login-section').classList.remove('visible');
             document.getElementById('login-section').classList.add('hidden');
 
             document.getElementById('login').style.display = 'none';
-            document.getElementById('logout-btn').style.display = 'block';
+            document.getElementById('logout-section').style.display = 'block';
             
             document.getElementById('inicio').classList.remove('hidden');
             document.getElementById('inicio').classList.add('visible');
@@ -487,37 +494,20 @@ async function fazerLogin() {
 }
 
 function atualizarMenuPorTipo() {
+    if (!userLogado) return;
+
     document.querySelectorAll('nav .nav-btn').forEach(btn => {
+        if (btn.id === 'login') { // mantém sempre visível
+            btn.style.display = 'inline-block';
+            return;
+        }
+
         const section = btn.dataset.section;
 
-        if (btn.id === 'login') {
-            // Botão login visível apenas se ninguém estiver logado
-            btn.style.display = userLogado ? 'none' : 'inline-block';
-            return;
-        }
-
-        if (btn.id === 'logout-btn') {
-            // Botão logout visível apenas se alguém estiver logado
-            btn.style.display = userLogado ? 'inline-block' : 'none';
-            return;
-        }
-
-        if (!userLogado) {
-            // Usuário convidado: só vê inicio, livros e avaliacoes
-            if (['inicio', 'livros', 'avaliacoes'].includes(section)) {
-                btn.style.display = 'inline-block';
-            } else {
-                btn.style.display = 'none';
-            }
-            return;
-        }
-
-        // Usuário logado
         if (userLogado.tipo.toLowerCase() === 'admin') {
-            btn.style.display = 'inline-block'; // admin vê tudo
+            btn.style.display = 'inline-block';
         } else {
-            // usuário comum
-            if (['inicio', 'livros', 'emprestimos', 'avaliacoes'].includes(section)) {
+            if (['inicio','livros','emprestimos','avaliacoes'].includes(section)) {
                 btn.style.display = 'inline-block';
             } else {
                 btn.style.display = 'none';
@@ -525,48 +515,47 @@ function atualizarMenuPorTipo() {
         }
     });
 }
-
 
 
 
 function atualizarPermissoesFormulario() {
-    const forms = document.querySelectorAll('form');
+    if (!userLogado) return;
 
+    const forms = document.querySelectorAll('form');
     forms.forEach(form => {
-        // Usuário não logado: esconde todos os forms de edição, mostra apenas login
-        if (!userLogado) {
-            if (form.id === 'form-login') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
+        // deixa login e avaliação visíveis para todos
+        if (['form-login', 'form-avaliacoes'].includes(form.id)) {
+            form.style.display = 'block';
+            return;
+        }
+ 
+        if (userLogado.tipo.toLowerCase() !== 'admin') {
+            form.style.display = 'none';
         } else {
-            // Usuário logado
-            if (userLogado.tipo.toLowerCase() === 'admin') {
-                form.style.display = 'block'; // admin vê todos os forms
-            } else {
-                // usuário normal não admin
-                if (['form-avaliacoes'].includes(form.id)) {
-                    form.style.display = 'block';
-                } else {
-                    form.style.display = 'none';
-                }
-            }
+            form.style.display = 'block';
         }
     });
 }
 
 
-function sairLogin() {
+document.getElementById('login').addEventListener('click', () => {
+    if (!userLogado) {
+        document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
+        document.getElementById('login-section').classList.remove('hidden');
+    } 
+});
+
+
+document.getElementById('logout-btn').addEventListener('click', () => {
     userLogado = null;
     alert('Sessão encerrada.');
-    window.location.reload();
+
     // volta para a tela inicial ou login
     document.querySelectorAll('.section').forEach(sec => sec.classList.add('hidden'));
     document.getElementById('inicio').classList.remove('hidden');
 
     atualizarMenuPorTipo(); // atualiza visibilidade do menu
-}
+});
 
 
 

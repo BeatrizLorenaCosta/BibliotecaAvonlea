@@ -143,6 +143,11 @@ async function carregarDados(tipo) {
         dados[tipo] = dadosAPI;
         preencherTabela(tipo, dadosAPI);
 
+        if (tipo === 'livros') {
+        atualizarCapasLivros(dadosAPI);
+        }
+
+
         // Atualizar selects
         switch (tipo) {
             case 'autores':
@@ -164,6 +169,17 @@ async function carregarDados(tipo) {
     } catch (error) {
         console.error(`Erro ao carregar ${tipo}:`, error);
     }
+
+    if (tipo === 'livros') {
+    dadosAPI.forEach(async livro => {
+        const imgEl = document.getElementById(`capa-${livro.id_livro}`);
+        if (!imgEl) return;
+
+        const capa = await buscarCapaLivro(livro.titulo, livro.nome_autor);
+
+        imgEl.src = capa || "placeholder.jpg";
+    });
+}
 }
 
 
@@ -221,18 +237,24 @@ function gerarLinha(tipo, item) {
     };
 
     const lookup = {
-        livros: () => `
-            <td>${item.titulo}</td>
-            <td>${item.nome_autor || 'Desconhecido'}</td>
-            <td>${item.nome_categoria || 'Desconhecida'}</td>
-            <td>${item.ano}</td>
-            <td>${item.disponivel ? 'Sim' : 'Não'}</td>
-            <td>${gerarEstrelas(item.media_avaliacao)}</td>
-            <td class="actions">
-                <button class="edit" onclick="editar('${tipo}', ${item.id_livro})">Editar</button>
-                <button class="delete" onclick="deletar('${tipo}', ${item.id_livro})">Excluir</button>
-            </td>
-        `,
+    livros: () => `
+        <td class="capa">
+            <img id="capa-${item.id_livro}" src="placeholder.jpg" width="60">
+            <span class="nomeLivro">${item.titulo}</span>
+        </td>
+        <td>${item.nome_autor || 'Desconhecido'}</td>
+        <td class="actions">
+           <button class="edit" onclick="abrirSecaoComCapa('infoLivro', ${item.id_livro})">Ver</button>
+        </td>
+    `,
+        // <td>${item.nome_categoria || 'Desconhecida'}</td>
+        // <td>${item.ano}</td>
+        // <td>${item.disponivel ? 'Sim' : 'Não'}</td>
+        //     <td>${gerarEstrelas(item.media_avaliacao)}</td>
+        //     <td class="actions">
+        //         <button class="edit" onclick="editar('${tipo}', ${item.id_livro})">Editar</button>
+        //         <button class="delete" onclick="deletar('${tipo}', ${item.id_livro})">Excluir</button>
+        //     </td>
         autores: () => `
             <td>${item.nome_autor}</td>
             <td>${item.nacionalidade}</td>
@@ -274,6 +296,16 @@ function gerarLinha(tipo, item) {
                 </td>
             `;
         },
+
+        dadosLivro: () => {
+            return `
+                <td>${item.titulo || 'Desconhecido'}</td>
+                <td>${item.nome_autor || 'Desconhecido'}</td>
+                <td>${item.nome_categoria || 'Desconhecido'}</td>
+                <td>${item.disponivel ? 'Sim' : 'Não'}</td>
+            `;
+        },
+
         utilizadores: () => `
             <td>${item.nome_utilizador}</td>
             <td>${item.email}</td>
@@ -567,6 +599,138 @@ function sairLogin() {
 
     atualizarMenuPorTipo(); // atualiza visibilidade do menu
 }
+
+async function buscarCapaLivro(titulo, autor) {
+    // Primeiro tenta Google Books
+    try {
+        const url = `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(titulo)}+inauthor:${encodeURIComponent(autor)}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+
+        if (data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail) {
+            return data.items[0].volumeInfo.imageLinks.thumbnail;
+        }
+    } catch (e) {}
+
+    // Depois tenta OpenLibrary
+    try {
+        const url2 = `https://openlibrary.org/search.json?title=${encodeURIComponent(titulo)}&author=${encodeURIComponent(autor)}`;
+        const resp2 = await fetch(url2);
+        const data2 = await resp2.json();
+
+        if (data2.docs?.[0]?.cover_i) {
+            return `https://covers.openlibrary.org/b/id/${data2.docs[0].cover_i}-M.jpg`;
+        }
+    } catch (e) {}
+
+    return null; // Nenhuma capa encontrada
+}
+
+async function atualizarCapasLivros(livros) {
+    for (const livro of livros) {
+        const imgEl = document.getElementById(`capa-${livro.id_livro}`);
+        if (!imgEl) continue;
+
+        const capa = await buscarCapaLivro(livro.titulo, livro.nome_autor);
+        imgEl.src = capa || "placeholder.jpg";
+    }
+}
+
+function abrirSecao(secaoId, idLivro = null) {
+    // Esconde todas as seções
+    document.querySelectorAll('.section').forEach(sec => {
+        sec.classList.add('hidden');
+        sec.classList.remove('visible');
+    });
+
+    // Mostra a seção desejada
+    const secao = document.getElementById(secaoId);
+    secao.classList.remove('hidden');
+    requestAnimationFrame(() => {
+        setTimeout(() => secao.classList.add('visible'), 50);
+    });
+
+    // Se passar um id de livro, carrega os dados
+    if (idLivro) {
+        preencherDadosLivro(idLivro);
+        preencherAvaliacoesLivro(idLivro);
+    }
+}
+
+async function preencherDadosLivro(idLivro) {
+    const livro = dados.livros.find(l => l.id_livro === idLivro);
+    if (!livro) return;
+
+    const capaEl = document.querySelector('#infoLivro .capaLivro');
+    const capa = await buscarCapaLivro(livro.titulo, livro.nome_autor);
+    capaEl.style.backgroundImage = `url('${capa || "placeholder.jpg"}')`;
+
+    const tabela = document.getElementById('tabela-dadosLivro');
+    tabela.rows[0].cells[1].textContent = livro.titulo || 'Desconhecido';
+    tabela.rows[1].cells[1].textContent = livro.nome_autor || 'Desconhecido';
+    tabela.rows[2].cells[1].textContent = livro.nome_categoria || 'Desconhecida';
+    tabela.rows[3].cells[1].textContent = livro.ano || '-';
+    tabela.rows[4].cells[1].textContent = livro.disponivel ? 'Sim' : 'Não';
+
+    // ✅ CORRIGIDO: NOME CERTO DA FUNÇÃO
+    preencherMediaEAvaliacoes(idLivro);  // 🎯 MÉDIA + ESTRELAS
+    
+    // ✅ TABELA DE AVALIAÇÕES
+    preencherAvaliacoesLivro(idLivro);
+}
+
+function preencherMediaEAvaliacoes(idLivro) {
+    const avaliacoes = dados.avaliacoes.filter(av => av.livro_id === idLivro);
+    
+    if (avaliacoes.length === 0) {
+        document.getElementById('mediaAvaliacao').textContent = '0.0';
+        document.getElementById('estrelasAvaliacao').innerHTML = '☆☆☆☆☆';
+        return;
+    }
+    
+    const soma = avaliacoes.reduce((total, av) => total + av.classificacao, 0);
+    const media = (soma / avaliacoes.length).toFixed(1);
+    
+    document.getElementById('mediaAvaliacao').textContent = media;
+    
+    document.getElementById('estrelasAvaliacao').innerHTML = gerarEstrelas(media);
+}
+
+function preencherAvaliacoesLivro(idLivro) {
+
+    const tbody = document.querySelector('#infoLivro #tabela-avaliacao tbody');
+    tbody.innerHTML = ''; // Limpa
+
+    // 🎯 Filtra avaliações pelo ID do livro
+    const avaliacoesLivro = dados.avaliacoes.filter(av => av.livro_id === idLivro);
+
+    if (avaliacoesLivro.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#888;">📝 Nenhuma avaliação ainda</td></tr>';
+        return;
+    }
+
+    // 🎯 Preenche com os dados
+    avaliacoesLivro.forEach(av => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${av.nome_utilizador || 'Anónimo'}</td>
+                <td>${av.comentario || '-'}</td>
+                <td>${gerarEstrelas(av.classificacao)}</td>
+            </tr>
+        `;
+    });
+}
+
+async function abrirSecaoComCapa(secaoId, idLivro) {
+    abrirSecao(secaoId); // Mostra a seção
+    await preencherDadosLivro(idLivro); // Atualiza capa e tabela
+    preencherAvaliacoesLivro(idLivro); // Atualiza avaliações
+}
+
+
+
+
+
 
 
 

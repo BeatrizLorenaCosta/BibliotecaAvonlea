@@ -282,13 +282,28 @@ app.delete('/api/emprestimos/:id', (req, res) => {
 
 
 // -------- AVALIACOES --------
+// ✅ CORRIGIDO: ENDPOINT COMPLETO
 app.get('/api/avaliacoes', (req, res) => {
-    db.query('SELECT a.id_avaliacao, l.titulo, u.nome_utilizador, a.comentario, a.classificacao FROM avaliacoes a JOIN livros l ON a.livro_id = l.id_livro JOIN utilizadores u ON a.utilizador_id = u.id_utilizador', (err, results) => {
+    const sql = `
+        SELECT 
+            a.id_avaliacao,
+            a.livro_id,
+            a.utilizador_id,
+            a.comentario,
+            a.classificacao,
+            l.titulo,           
+            u.nome_utilizador   
+        FROM avaliacoes a
+        JOIN livros l ON a.livro_id = l.id_livro
+        JOIN utilizadores u ON a.utilizador_id = u.id_utilizador
+        ORDER BY a.id_avaliacao DESC
+    `;
+    
+    db.query(sql, (err, results) => {
         if (err) return res.status(500).json({erro: err});
         res.json(results);
     });
 });
-
 app.post('/api/avaliacoes', (req, res) => {
     const { livro_id, utilizador_id, comentario, classificacao } = req.body;
     db.query('INSERT INTO avaliacoes (livro_id, utilizador_id, comentario, classificacao) VALUES (?, ?, ?, ?)',

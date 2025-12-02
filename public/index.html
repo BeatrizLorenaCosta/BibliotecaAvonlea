@@ -74,6 +74,44 @@
             <p>Comece explorando a biblioteca e descubra o seu próximo livro favorito! 🔎</p> -->
         </section>
 
+        <!-- INFO LIVRO -->
+<section id="infoLivro" class="section hidden">
+    <div class="InformacaoLivro">
+        
+        <!-- CAPA À ESQUERDA -->
+        <div class="capaLivro"></div>
+
+        <!-- TABELA PEQUENA À DIREITA DA CAPA -->
+        <div class="dadosLivro">
+            <table class="tabelaVertical" id="tabela-dadosLivro">
+                <tr><th>Título:</th>     <td></td></tr>
+                <tr><th>Autor:</th>      <td></td></tr>
+                <tr><th>Categoria:</th>  <td></td></tr>
+                <tr><th>Ano:</th>        <td></td></tr>
+                <tr><th>Disponível:</th> <td></td></tr>
+            </table>
+        </div>
+
+        <!-- MÉDIA CIRCULAR NO CANTO INFERIOR DIREITO -->
+        <div class="mediaAvaliacao">
+            <span id="mediaAvaliacao">0.0</span>
+            <span id="estrelasAvaliacao"></span>
+        </div>
+    </div>
+
+    <!-- TABELA DE AVALIAÇÕES ABAIXO -->
+    <table id="tabela-avaliacao">
+        <thead>
+            <tr>
+                <th>Utilizador</th>
+                <th>Comentário</th>
+                <th>Classificação</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
 
         <!-- Seção para Livros -->
         <section id="livros" class="section">
@@ -88,7 +126,19 @@
                 <label>Disponível: <input type="checkbox" id="livro-disponivel"></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('livros')">Adicionar/Atualizar</button>
             </form>
-            <table id="tabela-livros">
+
+             <table id="tabela-livros">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- <table id="tabela-livros">
                 <thead>
                     <tr>
                         <th>Título</th>
@@ -101,8 +151,10 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
-            </table>
+            </table> -->
         </section>
+
+
 
         <!-- Seção para Autores -->
         <section id="autores" class="section hidden">

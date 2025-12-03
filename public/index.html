@@ -15,6 +15,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="/src/js/script2.js"></script>
 </head>
 
@@ -31,7 +32,7 @@
                 <button class="nav-btn" data-section="categorias">Categorias</button>
                 <button class="nav-btn" data-section="utilizadores">Utilizadores</button>
                 <button class="nav-btn" data-section="emprestimos">Empréstimos</button>
-                <button class="nav-btn" data-section="avaliacoes">Avaliações</button>
+                <!-- <button class="nav-btn" data-section="avaliacoes">Avaliações</button> -->
                 <button title="Login" id="login" class="nav-btn login-btn" data-section="login-section"></button>
                 <button id="logout-btn" class="submit-btn" onclick="sairLogin()" >Sair</button>
             </nav>
@@ -92,6 +93,8 @@
             </table>
         </div>
 
+        <div class="soliLivro"><button>Solicitar Livro</button></div>
+
         <!-- MÉDIA CIRCULAR NO CANTO INFERIOR DIREITO -->
         <div class="mediaAvaliacao">
             <span id="mediaAvaliacao">0.0</span>
@@ -106,6 +109,7 @@
                 <th>Utilizador</th>
                 <th>Comentário</th>
                 <th>Classificação</th>
+                <th><button id="addAvaliacao">+</button></th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -135,7 +139,14 @@
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    <div class="pesquisa">
+                    <i class="fas fa-search search-icon"></i>
+                    <input idtype="text" placeholder="Pesquise um livro ou autor">
+                    </div>
+                    
+                    <br><br>
+                </tbody>
             </table>
 
             <!-- <table id="tabela-livros">

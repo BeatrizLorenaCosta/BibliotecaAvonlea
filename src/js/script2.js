@@ -237,7 +237,7 @@ function gerarLinha(tipo, item) {
     };
 
     const lookup = {
-    livros: () => `
+        livros: () => `
         <td class="capa">
             <img id="capa-${item.id_livro}" src="placeholder.jpg" width="60">
             <span class="nomeLivro">${item.titulo}</span>

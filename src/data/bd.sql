@@ -63,8 +63,7 @@ CREATE TABLE emprestimos (
     id_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
     livro_id INT NOT NULL,
     utilizador_id INT NOT NULL,
-    data_emprestimo DATE,
-    data_devolucao DATE,
+
     FOREIGN KEY (livro_id) REFERENCES livros(id_livro),
     FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador)
 );
@@ -78,6 +77,17 @@ CREATE TABLE avaliacoes (
     FOREIGN KEY (livro_id) REFERENCES livros(id_livro),
     FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador)
 );
+
+CREATE TABLE solicitacoes(
+    id_solicitacao INT AUTO_INCREMENT PRIMARY KEY,
+    livro_id INT NOT NULL,
+    utilizador_id INT NOT NULL,
+    data_solicitacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('Aberta' , 'Fechada')
+    FOREIGN KEY (livro_id) REFERENCES livros(id_livro),
+    FOREIGN KEY (utilizador_id) REFERENCES utilizadores(id_utilizador)
+);
+
 
 
 INSERT INTO autores (nome_autor, nacionalidade, data_nascimento)
@@ -104,8 +114,6 @@ VALUES
 ('Autoajuda', 'Livros que oferecem conselhos para desenvolvimento pessoal'),
 ('Clássicos', 'Obras reconhecidas como importantes na literatura universal');
 
-
-
 INSERT INTO livros (titulo, autor_id, categoria_id, ano, disponivel)
 VALUES 
 ('Dom Casmurro', 1, 1, 1899, true),
@@ -117,7 +125,3 @@ VALUES
 (1, 1, 'Excelente leitura, muito profundo.', 5),
 (2, 2, 'Interessante, mas um pouco lento.', 3),
 (3, 3, 'Obra-prima da literatura brasileira.', 5);
-
-
-
-

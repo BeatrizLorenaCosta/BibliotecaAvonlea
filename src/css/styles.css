@@ -169,6 +169,10 @@ input, select, textarea {
   box-sizing: border-box;
 }
 
+input{
+  border-radius: 20px;
+}
+
 button.submit-btn {
   grid-column: 1 / -1;
   background: var(--primary);
@@ -351,6 +355,42 @@ p, ul {
     color: #000000;
 }
 
+.soliLivro button {
+    position: absolute;
+    right: 20px;
+    z-index: 10;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    background: none;
+    border: 1px solid var(--primary);
+    padding: 0.6rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    transition: 0.2s;
+}
+
+.soliLivro button:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: #c6915c 0px 4px 15px;
+}
+
+#addAvaliacao{
+    border-radius: 45%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    background: #b55a30;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2ms
+}
+
+
 #mediaAvaliacao { font-size: 1.5em; }
 #estrelasAvaliacao { font-size: 0.9em; }
 
@@ -375,6 +415,26 @@ p, ul {
 
     .capaLivro { margin-bottom: 0; }
     .dadosLivro { margin-top: 0; }
+}
+
+.pesquisa {
+  position: relative;  /* Isso permite posicionar o ícone em cima do input */
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;  /* Posiciona o ícone dentro do input */
+  left: 15px;          /* Distância da esquerda */
+  top: 50%;            /* Centraliza verticalmente */
+  transform: translateY(-50%);
+  color: #888;         /* Cor do ícone (cinza claro) */
+  font-size: 18px;     /* Tamanho do ícone */
+  pointer-events: none; /* Não clica no ícone */
+}
+
+.pesquisa input {
+  padding-left: 45px;  /* Espaço à esquerda para o ícone não sobrepor o texto */
+  /* O resto do estilo continua igual ao que eu te passei antes */
 }
 
 

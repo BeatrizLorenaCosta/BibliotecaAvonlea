@@ -48,20 +48,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // =======================
     const loginBtn = document.getElementById('login');
     loginBtn.addEventListener('click', () => {
-    if (!userLogado) {
-        navButtons.forEach(b => b.classList.remove('active'));
-        loginBtn.classList.add('active');
+        if (!userLogado) {
+            navButtons.forEach(b => b.classList.remove('active'));
+            loginBtn.classList.add('active');
 
-        document.querySelectorAll('.section').forEach(sec => {
-            sec.classList.add('hidden');
-            sec.classList.remove('visible');
-        });
-        document.getElementById('login-section').classList.remove('hidden');
-        requestAnimationFrame(() => {
-            setTimeout(() => document.getElementById('login-section').classList.add('visible'), 50);
-        });
-    }
-});
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.add('hidden');
+                sec.classList.remove('visible');
+            });
+            document.getElementById('login-section').classList.remove('hidden');
+            requestAnimationFrame(() => {
+                setTimeout(() => document.getElementById('login-section').classList.add('visible'), 50);
+            });
+        }
+    });
 
     // =======================
     // LOGOUT
@@ -98,18 +98,71 @@ document.addEventListener('DOMContentLoaded', () => {
     // =======================
     // CARREGAR DADOS INICIAIS
     // =======================
-    ['autores', 'categorias', 'livros', 'utilizadores', 'emprestimos', 'avaliacoes'].forEach(tipo => {
+    ['autores', 'categorias', 'livros', 'utilizadores', 'emprestimos', 'avaliacoes', 'reservas'].forEach(tipo => {
         carregarDados(tipo);
     });
 
     // =======================
     // ATUALIZAR ESTATÍSTICAS
     // =======================
-    atualizarEstatisticas();
+    // atualizarEstatisticas();
 
-    atualizarMenuPorTipo();
-    atualizarPermissoesFormulario();
+    // atualizarMenuPorTipo();
+    // atualizarPermissoesFormulario();
+
+    // =======================
+    // BOTÃO SOLICITAR LIVRO
+    // =======================
+
+    const solicitarLivroBtn = document.getElementById('soliLivro');
+    const loginSection = document.getElementById('login-section');
+    const infoLivro = document.getElementById('infoLivro');
+
+    solicitarLivroBtn.addEventListener('click', () => {
+        console.log('Botão solicitar livro clicado. userLogado:', userLogado);
+        const livroId = solicitarLivroBtn.dataset.livroId;
+        solicitarLivro(livroId);
+    });
+
+    const popup = document.getElementById('meu-popup');
+    const confirmacaoBtn = document.getElementById('confirmar-reserva');
+    const fecharBtn = document.getElementById('cancelar-reserva');
+
+    confirmacaoBtn.addEventListener('click', () => {
+        const idLivro = popup.dataset.livroId;
+        fazerReserva(idLivro);
+        popup.close();
+        // popup.style.display = 'none'; // Esconde o popup
+    });
+
+    fecharBtn.addEventListener('click', () => {
+        popup.style.display = 'none'; // Esconde o popup
+    });
+
+
 });
+
+function fazerReserva(idLivro) {
+    fetch('http://localhost:3000/api/reservas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            livro_id: idLivro,
+            utilizador_id: userLogado.id_utilizador
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                mostrarMensagem('reservas', "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+            } else {
+                mostrarMensagem('reservas', "✅ Reserva realizada com sucesso!", true);
+                carregarDados('reservas'); // Atualiza a tabela de reservas
+                carregarDados('livros');   // Atualiza a tabela de livros
+            }
+        })
+        .catch(err => mostrarMensagem('reservas', "❌ Erro de conexão com o servidor.", false));
+}
 
 
 // Função genérica para carregar dados
@@ -136,6 +189,9 @@ async function carregarDados(tipo) {
                         }
                     });
                     break;
+                case 'reservas':
+                    dadosAPI = dadosAPI.filter(r => r.utilizador_id === userLogado.id_utilizador);
+                    break;
                 // livros e inicio permanecem completos
             }
         }
@@ -144,7 +200,7 @@ async function carregarDados(tipo) {
         preencherTabela(tipo, dadosAPI);
 
         if (tipo === 'livros') {
-        atualizarCapasLivros(dadosAPI);
+            atualizarCapasLivros(dadosAPI);
         }
 
 
@@ -171,15 +227,16 @@ async function carregarDados(tipo) {
     }
 
     if (tipo === 'livros') {
-    dadosAPI.forEach(async livro => {
-        const imgEl = document.getElementById(`capa-${livro.id_livro}`);
-        if (!imgEl) return;
+        dadosAPI.forEach(async livro => {
+            const imgEl = document.getElementById(`capa-${livro.id_livro}`);
+            if (!imgEl) return;
 
-        const capa = await buscarCapaLivro(livro.titulo, livro.nome_autor);
+            const capa = await buscarCapaLivro(livro.titulo, livro.nome_autor);
 
-        imgEl.src = capa || "placeholder.jpg";
-    });
-}
+            imgEl.src = capa || "placeholder.jpg";
+        });
+    }
+
 }
 
 
@@ -208,6 +265,23 @@ function preencherTabela(tipo, dadosArray) {
         tr.innerHTML = gerarLinha(tipo, item);
         tbody.appendChild(tr);
     });
+
+    if (tipo === 'livros') {
+        document.querySelectorAll('#tabela-livros .edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const livroId = btn.dataset.livroId;
+                abrirSecaoComCapa('infoLivro', livroId);
+            });
+        });
+
+        document.querySelectorAll('#soliLivro').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const livroId = btn.dataset.livroId;
+                solicitarLivro(livroId);
+            });
+        });
+    }
+
 }
 
 // Função para gerar estrelas, suporta meia estrela
@@ -216,12 +290,12 @@ function gerarEstrelas(qtd) {
     let estrelasHTML = '';
     for (let i = 1; i <= total; i++) {
         if (i <= Math.floor(qtd)) {
-        estrelasHTML += '<span class="estrela cheia">★</span>';
-    } else if (i === Math.floor(qtd) + 1 && qtd % 1 !== 0) {
-        estrelasHTML += '<span class="estrela meia">⯪</span>';
-    } else {
-        estrelasHTML += '<span class="estrela vazia">☆</span>';
-    }
+            estrelasHTML += '<span class="estrela cheia">★</span>';
+        } else if (i === Math.floor(qtd) + 1 && qtd % 1 !== 0) {
+            estrelasHTML += '<span class="estrela meia">⯪</span>';
+        } else {
+            estrelasHTML += '<span class="estrela vazia">☆</span>';
+        }
     }
     return estrelasHTML;
 }
@@ -275,18 +349,23 @@ function gerarLinha(tipo, item) {
         emprestimos: () => {
             return `
                 <td>${item.titulo || 'Desconhecido'}</td>
-                <td>${item.nome_utilizador || 'Desconhecido'}</td>
-                <td>${new Date(item.data_emprestimo).toLocaleDateString('pt-PT')}</td>
                 <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
-                <td class="actions">
-                    <button class="edit" onclick="editar('emprestimos', ${item.id_emprestimo})">Editar</button>
-                    <button class="delete" onclick="deletar('emprestimos', ${item.id_emprestimo})">Excluir</button>
-                </td>
+                <td>${item.status || 'Desconhecido'}</td>
             `;
         },
+
+        reservas: () => `
+            <td>${item.livro || 'Desconhecido'}</td>
+            <td>${item.autor || 'Desconhecido'}</td>
+            <td>${new Date(item.data_reserva).toLocaleDateString('pt-PT')}</td>
+            <td>${item.status || 'Pendente'}</td>
+            <td class="actions">
+                <button class="delete" onclick="deletar('reservas', ${item.id_reserva})">Cancelar</button>
+            </td>
+        `,
         avaliacoes: () => {
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
+                <td> ${item.titulo || 'Desconhecido'}
                 <td>${item.nome_utilizador || 'Desconhecido'}</td>
                 <td>${item.comentario}</td>
                 <td>${gerarEstrelas(item.classificacao)}</td>
@@ -299,7 +378,7 @@ function gerarLinha(tipo, item) {
 
         dadosLivro: () => {
             return `
-                <td>${item.titulo || 'Desconhecido'}</td>
+                <td> ${item.titulo || 'Desconhecido'}</td >
                 <td>${item.nome_autor || 'Desconhecido'}</td>
                 <td>${item.nome_categoria || 'Desconhecido'}</td>
                 <td>${item.disponivel ? 'Sim' : 'Não'}</td>
@@ -307,7 +386,7 @@ function gerarLinha(tipo, item) {
         },
 
         utilizadores: () => `
-            <td>${item.nome_utilizador}</td>
+            <td> ${item.nome_utilizador}</td>
             <td>${item.email}</td>
             <td>${item.tipo}</td>
             <td>${item.livros_emprestados || 0}</td>
@@ -316,7 +395,7 @@ function gerarLinha(tipo, item) {
                 <button class="edit" onclick="editar('utilizadores', ${item.id_utilizador})">Editar</button>
                 <button class="delete" onclick="deletar('utilizadores', ${item.id_utilizador})">Excluir</button>
             </td>
-        `
+            `
     };
 
     return lookup[tipo] ? lookup[tipo]() : '';
@@ -324,9 +403,9 @@ function gerarLinha(tipo, item) {
 
 // Função para mostrar mensagens na página
 function mostrarMensagem(tipo, texto, sucesso = true) {
-    const p = document.getElementById(`${tipo}-mensagem`);
+    const p = document.getElementById(`${tipo} -mensagem`);
     p.textContent = texto;
-    p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'}`;
+    p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'} `;
     p.style.display = 'block';
 
     setTimeout(() => {
@@ -336,7 +415,7 @@ function mostrarMensagem(tipo, texto, sucesso = true) {
 
 // Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
-    const form = document.getElementById(`form-${tipo}`);
+    const form = document.getElementById(`form - ${tipo} `);
     const dados = {};
     let todosPreenchidos = true;
 
@@ -491,19 +570,19 @@ async function fazerLogin() {
         const data = await res.json();
 
         if (res.ok) {
-            userLogado = data.user; // Guarda info do login
+            userLogado = data.user;
             erroMsg.style.display = 'none';
             alert(`Bem-vindo(a) ${userLogado.nome_utilizador} (${userLogado.tipo})`);
 
             atualizarMenuPorTipo();
             atualizarPermissoesFormulario();
-                
+
             document.getElementById('login-section').classList.remove('visible');
             document.getElementById('login-section').classList.add('hidden');
 
             document.getElementById('login').style.display = 'none';
             document.getElementById('logout-btn').style.display = 'block';
-            
+
             document.getElementById('inicio').classList.remove('hidden');
             document.getElementById('inicio').classList.add('visible');
 
@@ -517,6 +596,7 @@ async function fazerLogin() {
         erroMsg.textContent = 'Erro no servidor. Tente novamente mais tarde.';
     }
 }
+
 
 function atualizarMenuPorTipo() {
     document.querySelectorAll('nav .nav-btn').forEach(btn => {
@@ -559,8 +639,6 @@ function atualizarMenuPorTipo() {
 }
 
 
-
-
 function atualizarPermissoesFormulario() {
     const forms = document.querySelectorAll('form');
 
@@ -588,7 +666,6 @@ function atualizarPermissoesFormulario() {
     });
 }
 
-
 function sairLogin() {
     userLogado = null;
     alert('Sessão encerrada.');
@@ -610,7 +687,7 @@ async function buscarCapaLivro(titulo, autor) {
         if (data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail) {
             return data.items[0].volumeInfo.imageLinks.thumbnail;
         }
-    } catch (e) {}
+    } catch (e) { }
 
     // Depois tenta OpenLibrary
     try {
@@ -621,7 +698,7 @@ async function buscarCapaLivro(titulo, autor) {
         if (data2.docs?.[0]?.cover_i) {
             return `https://covers.openlibrary.org/b/id/${data2.docs[0].cover_i}-M.jpg`;
         }
-    } catch (e) {}
+    } catch (e) { }
 
     return null; // Nenhuma capa encontrada
 }
@@ -674,25 +751,30 @@ async function preencherDadosLivro(idLivro) {
 
     // ✅ CORRIGIDO: NOME CERTO DA FUNÇÃO
     preencherMediaEAvaliacoes(idLivro);  // 🎯 MÉDIA + ESTRELAS
-    
+
     // ✅ TABELA DE AVALIAÇÕES
     preencherAvaliacoesLivro(idLivro);
+
+    const btnSolicitar = document.getElementById('soliLivro');
+    btnSolicitar.dataset.livroId = idLivro;
+
+
 }
 
 function preencherMediaEAvaliacoes(idLivro) {
     const avaliacoes = dados.avaliacoes.filter(av => av.livro_id === idLivro);
-    
+
     if (avaliacoes.length === 0) {
         document.getElementById('mediaAvaliacao').textContent = '0.0';
         document.getElementById('estrelasAvaliacao').innerHTML = '☆☆☆☆☆';
         return;
     }
-    
+
     const soma = avaliacoes.reduce((total, av) => total + av.classificacao, 0);
     const media = (soma / avaliacoes.length).toFixed(1);
-    
+
     document.getElementById('mediaAvaliacao').textContent = media;
-    
+
     document.getElementById('estrelasAvaliacao').innerHTML = gerarEstrelas(media);
 }
 
@@ -727,10 +809,52 @@ async function abrirSecaoComCapa(secaoId, idLivro) {
     preencherAvaliacoesLivro(idLivro); // Atualiza avaliações
 }
 
+function solicitarLivro(idLivro) {
+    idLivro = Number(idLivro);
+    const livro = dados.livros.find(l => l.id_livro === idLivro);
 
+    if (!livro) {
+        console.error('Livro não encontrado:', idLivro);
+        alert('Erro: livro não encontrado.');
+        return;
+    }
 
+    // 1️⃣ Usuário não logado → redireciona para login
+    if (!userLogado) {
+        abrirSecao('login-section');
+        return;
+    }
 
+    // 2️⃣ Livro disponível → faz empréstimo automático
+    if (livro.disponivel === 1 || livro.disponivel === true) {
+        fetch('http://localhost:3000/api/emprestimos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                livro_id: idLivro,
+                utilizador_id: userLogado.id_utilizador,
+                data_emprestimo: new Date().toISOString().slice(0, 10)
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.erro) {
+                    mostrarMensagem('emprestimos', "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+                } else {
+                    mostrarMensagem('emprestimos', '✅ Empréstimo realizado!', true);
+                    carregarDados('emprestimos');
+                    carregarDados('livros');
+                }
+            })
+            .catch(err => mostrarMensagem('emprestimos', "❌ Erro de conexão com o servidor.", false));
+        return;
+    }
 
+    // 3️⃣ Livro indisponível → exibe popup de reserva
+    const popup = document.getElementById('meu-popup');
+    popup.dataset.livroId = idLivro;
+    popup.style.display = 'block'; // Exibe o popup
+}
 
 
 

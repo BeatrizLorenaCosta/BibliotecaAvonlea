@@ -1,0 +1,32 @@
+dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 90%;
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+}
+
+dialog::backdrop {
+    background: rgba(0,0,0,0.5);  /* Fundo escuro atrás */
+}
+
+/* DIV COM OS BOTÕES */
+.dentroPopUp {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;     /* ← CENTRALIZA HORIZONTALMENTE */
+    align-items: center;         /* ← CENTRALIZA VERTICALMENTE */
+    gap: 20px;                   /* espaço entre os botões */
+    margin-top: 20px;            /* espaço acima dos botões */
+}
+
+/* BOTÕES BONITOS E DO MESMO TAMANHO */
+.dentroPopUp .nav-btn {
+    min-width: 100px;            /* os dois botões ficam do mesmo tamanho */
+    padding: 12px 24px;
+    font-weight: 600;
+}

@@ -93,7 +93,20 @@
             </table>
         </div>
 
-        <div class="soliLivro"><button>Solicitar Livro</button></div>
+        <div class="soliLivro">
+            <button id="soliLivro" data-livro-id="${item.id_livro}">Solicitar Livro</button>
+        </div>
+
+        <dialog id="meu-popup" class="popup" style="display: none;">
+            <h2>Livro indisponível</h2>
+            <p>Este livro não está disponível. Deseja reservar?</p>
+            <div class="dentroPopUp">
+                <button class="nav-btn" id="confirmar-reserva">Sim</button>
+                <button class="nav-btn" id="cancelar-reserva">Não</button>
+            </div>
+        </dialog>
+
+
 
         <!-- MÉDIA CIRCULAR NO CANTO INFERIOR DIREITO -->
         <div class="mediaAvaliacao">
@@ -144,10 +157,10 @@
                     <i class="fas fa-search search-icon"></i>
                     <input idtype="text" placeholder="Pesquise um livro ou autor">
                     </div>
-                    
                     <br><br>
                 </tbody>
             </table>
+
 
             <!-- <table id="tabela-livros">
                 <thead>
@@ -255,7 +268,7 @@
                 <label>Data Devolução: <input type="date" id="emprestimo-data_devolucao"></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
             </form>
-            <table id="tabela-emprestimos">
+            <!-- <table id="tabela-emprestimos">
                 <thead>
                     <tr>
                         <th>Livro</th>
@@ -266,7 +279,35 @@
                     </tr>
                 </thead>
                 <tbody></tbody>
+            </table> -->
+
+            <table id="tabela-emprestimos">
+                <thead>
+                    <tr>
+                        <th>Livro</th>
+                        <th>Data Devolução</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
+
+            <h2>Reservas</h2>
+            <table id="tabela-reservas">
+        <thead>
+        <tr>
+            <th>Livro</th>
+            <th>Autor</th>
+            <th>Data da Reserva</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody id="reservas-body">
+            <!-- As linhas serão preenchidas pela função carregarReservas -->
+        </tbody>
+</table>
+
         </section>
 
         <!-- Seção para Avaliações (Extra) -->

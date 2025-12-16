@@ -437,4 +437,42 @@ p, ul {
   /* O resto do estilo continua igual ao que eu te passei antes */
 }
 
+dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 500px;
+    width: 90%;
+    
+    /* Centralização no meio da tela */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* Layout interno */
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.dentroPopUp {
+    display: flex;
+    gap: 20px;
+}
+
+.dentroPopUp .nav-btn {
+    min-width: 100px;
+    padding: 12px 24px;
+    font-weight: 600;
+}
+
+
 

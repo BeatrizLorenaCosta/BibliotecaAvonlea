@@ -76,7 +76,7 @@
         </section>
 
         <!-- INFO LIVRO -->
-<section id="infoLivro" class="section hidden">
+<section id="infoLivro" class="section hidden" data-section="infoLivro">
     <div class="InformacaoLivro">
         
         <!-- CAPA À ESQUERDA -->
@@ -96,6 +96,8 @@
         <div class="soliLivro">
             <button id="soliLivro" data-livro-id="${item.id_livro}">Solicitar Livro</button>
         </div>
+
+        <p id="reservas-mensagem" style="color: red; display: none;"></p>
 
         <dialog id="meu-popup" class="popup" style="display: none;">
             <h2>Livro indisponível</h2>

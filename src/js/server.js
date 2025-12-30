@@ -397,6 +397,46 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+// ROTA PARA CRIAR CONTA (REGISTRO)
+app.post('/api/registro', (req, res) => {
+    const { nome_utilizador, email, senha, tipo } = req.body;
+
+    if (!nome_utilizador || !email || !senha || !tipo) {
+        return res.status(400).json({ mensagem: 'Todos os campos são obrigatórios' });
+    }
+
+    // Primeiro: verifica se o email já existe
+    db.query('SELECT * FROM utilizadores WHERE email = ?', [email], (err, results) => {
+        if (err) return res.status(500).json({ erro: err });
+        if (results.length > 0) {
+            return res.status(400).json({ mensagem: 'Este email já está registrado' });
+        }
+
+        // Segundo: pega o id_conta correspondente ao tipo (aluno, professor, etc.)
+        db.query('SELECT id_conta FROM contas WHERE tipo = ?', [tipo], (err, results) => {
+            if (err) return res.status(500).json({ erro: err });
+            if (results.length === 0) {
+                return res.status(400).json({ mensagem: 'Tipo de utilizador inválido' });
+            }
+
+            const id_conta = results[0].id_conta;
+
+            // Terceiro: insere o novo utilizador
+            db.query(
+                'INSERT INTO utilizadores (nome_utilizador, email, senha, id_conta) VALUES (?, ?, ?, ?)',
+                [nome_utilizador, email, senha, id_conta],
+                (err, result) => {
+                    if (err) return res.status(500).json({ erro: err });
+                    res.json({
+                        sucesso: true,
+                        mensagem: 'Conta criada com sucesso! Faça login para entrar.'
+                    });
+                }
+            );
+        });
+    });
+});
+
 app.use(express.static('public'));
 app.use('/src', express.static('src'));
 

@@ -116,8 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =======================
 
     const solicitarLivroBtn = document.getElementById('soliLivro');
-    const loginSection = document.getElementById('login-section');
-    const infoLivro = document.getElementById('infoLivro');
 
     solicitarLivroBtn.addEventListener('click', () => {
         console.log('Botão solicitar livro clicado. userLogado:', userLogado);
@@ -140,6 +138,36 @@ document.addEventListener('DOMContentLoaded', () => {
         popup.style.display = 'none'; // Esconde o popup
     });
 
+    document.querySelectorAll('.redirect').forEach(element => {
+        element.addEventListener('click', function () {
+            const targetSection = this.dataset.section; // 'login' ou 'signup'
+
+            // Esconde todas as secções
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.remove('visible');
+                sec.classList.add('hidden');
+            });
+
+            // Mostra a secção correta com transição suave
+            const target = document.getElementById(targetSection);
+            target.classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                target.classList.add('visible');
+            });
+
+            // Atualiza o botão ativo no menu (se existir um botão para login/signup)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Ativa o botão correspondente no menu
+            const navButton = document.querySelector(`.nav-btn[data-section="${targetSection}"]`);
+            if (navButton) {
+                navButton.classList.add('active');
+            }
+        });
+    });
 
 });
 
@@ -257,32 +285,49 @@ function preencherSelect(selectId, dadosArray, idCampo, nomeCampo, textoDefault 
 
 // Função genérica para preencher tabelas
 function preencherTabela(tipo, dadosArray) {
-    const tbody = document.querySelector(`#tabela-${tipo} tbody`);
-    if (!tbody) return;
-    tbody.innerHTML = '';
+    if (tipo !== 'livros') {
+        // Para outras tabelas, mantém o comportamento antigo
+        const tbody = document.querySelector(`#tabela-${tipo} tbody`);
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        dadosArray.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = gerarLinha(tipo, item);
+            tbody.appendChild(tr);
+        });
+        return;
+    }
+
+    // ====== ESPECIAL PARA LIVROS ======
+    const isAdmin = userLogado && userLogado.tipo.toLowerCase() === 'admin';
+
+    const tabelaAdmin = document.getElementById('tabela-livros');
+    const tabelaUser = document.getElementById('tabela-livros-user');
+
+    const tbodyAdmin = tabelaAdmin.querySelector('tbody');
+    const tbodyUser = tabelaUser ? tabelaUser.querySelector('tbody') : null;
+
+    // Decide qual tabela mostrar
+    tabelaAdmin.style.display = isAdmin ? 'table' : 'none';
+    if (tabelaUser) tabelaUser.style.display = isAdmin ? 'none' : 'table';
+
+    // Limpa as duas (por segurança)
+    tbodyAdmin.innerHTML = '';
+    if (tbodyUser) tbodyUser.innerHTML = '';
+
+    // Preenche a tabela correta
+    const tbodyCorreto = isAdmin ? tbodyAdmin : tbodyUser;
 
     dadosArray.forEach(item => {
         const tr = document.createElement('tr');
-        tr.innerHTML = gerarLinha(tipo, item);
-        tbody.appendChild(tr);
+        tr.innerHTML = gerarLinha(tipo, item, isAdmin); // passa isAdmin como parâmetro
+        tbodyCorreto.appendChild(tr);
     });
 
-    if (tipo === 'livros') {
-        document.querySelectorAll('#tabela-livros .edit').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const livroId = btn.dataset.livroId;
-                abrirSecaoComCapa('infoLivro', livroId);
-            });
-        });
-
-        document.querySelectorAll('#soliLivro').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const livroId = btn.dataset.livroId;
-                solicitarLivro(livroId);
-            });
-        });
+    // Só carrega capas para usuário comum
+    if (!isAdmin && tabelaUser) {
+        atualizarCapasLivros(dadosArray);
     }
-
 }
 
 // Função para gerar estrelas, suporta meia estrela
@@ -302,92 +347,112 @@ function gerarEstrelas(qtd) {
 }
 
 // Função que gera HTML da linha da tabela
-function gerarLinha(tipo, item) {
-
-    const tipoUser = {
-        1: 'Admin',
-        2: 'Aluno',
-        3: 'Professor',
-        4: 'Outro' // se houver mais tipos
-    };
+function gerarLinha(tipo, item, isAdmin = false) { // isAdmin agora é parâmetro opcional
 
     const lookup = {
-        livros: () => `
-        <td class="capa">
-            <img id="capa-${item.id_livro}" src="placeholder.jpg" width="60">
-            <span class="nomeLivro">${item.titulo}</span>
-        </td>
-        <td>${item.nome_autor || 'Desconhecido'}</td>
-        <td class="actions">
-           <button class="edit" onclick="abrirSecaoComCapa('infoLivro', ${item.id_livro})">Ver</button>
-        </td>
-    `,
-        // <td>${item.nome_categoria || 'Desconhecida'}</td>
-        // <td>${item.ano}</td>
-        // <td>${item.disponivel ? 'Sim' : 'Não'}</td>
-        //     <td>${gerarEstrelas(item.media_avaliacao)}</td>
-        //     <td class="actions">
-        //         <button class="edit" onclick="editar('${tipo}', ${item.id_livro})">Editar</button>
-        //         <button class="delete" onclick="deletar('${tipo}', ${item.id_livro})">Excluir</button>
-        //     </td>
+        livros: () => {
+            if (isAdmin) {
+                return `
+                    <td>${item.titulo || 'Desconhecido'}</td>
+                    <td>${item.nome_autor || 'Desconhecido'}</td>
+                    <td>${item.nome_categoria || 'Desconhecida'}</td>
+                    <td>${item.ano || '-'}</td>
+                    <td>${item.disponivel ? 'Sim' : 'Não'}</td>
+                    <td>${gerarEstrelas(item.media_avaliacao || 0)}</td>
+                    <td class="actions">
+                        <button class="edit" onclick="editar('livros', ${item.id_livro})">Editar</button>
+                        <button class="delete" onclick="deletar('livros', ${item.id_livro})">Excluir</button>
+                    </td>
+                `;
+            } else {
+                return `
+                    <td class="capa">
+                        <img id="capa-${item.id_livro}" src="placeholder.jpg" width="80" height="120" alt="Capa">
+                        <br>
+                        ${item.titulo || 'Desconhecido'}
+                    </td
+                    <td>${item.nome_autor || 'Desconhecido'}</td>
+                    <td>${item.ano || 'Desconhecido'}</td>
+                    <td class="actions">
+                        <button class="edit" onclick="abrirSecaoComCapa('infoLivro', ${item.id_livro})">Ver Detalhes</button>
+                    </td>
+                `;
+            }
+        },
+
         autores: () => `
             <td>${item.nome_autor}</td>
             <td>${item.nacionalidade}</td>
-            <td>${new Date(item.data_nascimento).toLocaleDateString('pt-PT')}</td>
-            <td class="actions">
-                <button class="edit" onclick="editar('autores', ${item.id_autor})">Editar</button>
-                <button class="delete" onclick="deletar('autores', ${item.id_autor})">Excluir</button>
-            </td>
-        `,
+            <td>${new Date(item.data_nascimento).toLocaleDateString('pt-PT')
+            }</td >
+    <td class="actions">
+        <button class="edit" onclick="editar('autores', ${item.id_autor})">Editar</button>
+        <button class="delete" onclick="deletar('autores', ${item.id_autor})">Excluir</button>
+    </td>
+`,
         categorias: () => `
-            <td>${item.nome_categoria}</td>
+    <td> ${item.nome_categoria}</td >
             <td>${item.descricao}</td>
             <td class="actions">
                 <button class="edit" onclick="editar('categorias', ${item.id_categoria})">Editar</button>
                 <button class="delete" onclick="deletar('categorias', ${item.id_categoria})">Excluir</button>
             </td>
-        `,
+`,
         emprestimos: () => {
-            return `
-                <td>${item.titulo || 'Desconhecido'}</td>
+            if (isAdmin) {
+                return ` 
+                <td>${item.nome_utilizador}</td>
+                <td> ${item.titulo || 'Desconhecido'}</td >
+                <td> ${item.data_emprestimo ? new Date(item.data_emprestimo).toLocaleDateString('pt-PT') : 'Desconhecido'}</td>
                 <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
                 <td>${item.status || 'Desconhecido'}</td>
-            `;
+                <td class="actions">
+                <button class="edit" onclick="editar('emprestimos', ${item.id_emprestimo})">Editar</button>
+                <button class="delete" onclick="deletar('emprestimos', ${item.id_emprestimo})">Excluir</button>
+            </td>
+`;
+            } else {
+                return ` 
+                <td> ${item.titulo || 'Desconhecido'}</td >
+                <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
+                <td>${item.status || 'Desconhecido'}</td>
+`;
+            }
+
         },
 
         reservas: () => `
-            <td>${item.livro || 'Desconhecido'}</td>
+            <td> ${item.livro || 'Desconhecido'}</td >
             <td>${item.autor || 'Desconhecido'}</td>
             <td>${new Date(item.data_reserva).toLocaleDateString('pt-PT')}</td>
             <td>${item.status || 'Pendente'}</td>
             <td class="actions">
                 <button class="delete" onclick="deletar('reservas', ${item.id_reserva})">Cancelar</button>
             </td>
-        `,
+`,
         avaliacoes: () => {
             return `
-                <td> ${item.titulo || 'Desconhecido'}
+    <td> ${item.titulo || 'Desconhecido'}
                 <td>${item.nome_utilizador || 'Desconhecido'}</td>
                 <td>${item.comentario}</td>
                 <td>${gerarEstrelas(item.classificacao)}</td>
                 <td class="actions">
-                    <button class="edit" onclick="editar('avaliacoes', ${item.id_avaliacao})">Editar</button>
                     <button class="delete" onclick="deletar('avaliacoes', ${item.id_avaliacao})">Excluir</button>
                 </td>
-            `;
+`;
         },
 
         dadosLivro: () => {
             return `
-                <td> ${item.titulo || 'Desconhecido'}</td >
+    <td> ${item.titulo || 'Desconhecido'}</td >
                 <td>${item.nome_autor || 'Desconhecido'}</td>
                 <td>${item.nome_categoria || 'Desconhecido'}</td>
                 <td>${item.disponivel ? 'Sim' : 'Não'}</td>
-            `;
+`;
         },
 
         utilizadores: () => `
-            <td> ${item.nome_utilizador}</td>
+    <td> ${item.nome_utilizador}</td >
             <td>${item.email}</td>
             <td>${item.tipo}</td>
             <td>${item.livros_emprestados || 0}</td>
@@ -396,7 +461,7 @@ function gerarLinha(tipo, item) {
                 <button class="edit" onclick="editar('utilizadores', ${item.id_utilizador})">Editar</button>
                 <button class="delete" onclick="deletar('utilizadores', ${item.id_utilizador})">Excluir</button>
             </td>
-            `
+`
     };
 
     return lookup[tipo] ? lookup[tipo]() : '';
@@ -404,7 +469,7 @@ function gerarLinha(tipo, item) {
 
 // Função para mostrar mensagens na página
 function mostrarMensagem(tipo, texto, sucesso = true) {
-const p = document.getElementById(`${tipo}-mensagem`);
+    const p = document.getElementById(`${tipo} -mensagem`);
     p.textContent = texto;
     p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'} `;
     p.style.display = 'block';
@@ -416,9 +481,9 @@ const p = document.getElementById(`${tipo}-mensagem`);
 
 // Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
-    const form = document.getElementById(`form-${tipo}`);
-const idInput = form.querySelector('input[type="hidden"]');
-const idExistente = idInput && idInput.value ? idInput.value : null;
+    const form = document.getElementById(`form - ${tipo} `);
+    const idInput = form.querySelector('input[type="hidden"]');
+    const idExistente = idInput && idInput.value ? idInput.value : null;
 
     const dadosParaEnviar = {};
     let todosPreenchidos = true;
@@ -459,28 +524,28 @@ const idExistente = idInput && idInput.value ? idInput.value : null;
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dadosParaEnviar)
     })
-    .then(res => res.json())
-    .then(data => {
-        if (data.erro) {
-            mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
-        } else {
-            mostrarMensagem(
-                tipo,
-                idExistente ? "✅ Atualizado com sucesso!" : "✅ Guardado com sucesso!",
-                true
-            );
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+            } else {
+                mostrarMensagem(
+                    tipo,
+                    idExistente ? "✅ Atualizado com sucesso!" : "✅ Guardado com sucesso!",
+                    true
+                );
 
-            form.reset();
-            if (idInput) idInput.value = '';
-const btn = form.querySelector('button[type="submit"], button');
-if (btn) btn.textContent = 'Adicionar';
+                form.reset();
+                if (idInput) idInput.value = '';
+                const btn = form.querySelector('button[type="submit"], button');
+                if (btn) btn.textContent = 'Adicionar';
 
-            carregarDados(tipo);
-        }
-    })
-    .catch(() => {
-        mostrarMensagem(tipo, "❌ Erro de ligação ao servidor.", false);
-    });
+                carregarDados(tipo);
+            }
+        })
+        .catch(() => {
+            mostrarMensagem(tipo, "❌ Erro de ligação ao servidor.", false);
+        });
 }
 
 let autorEmEdicao = null;
@@ -493,17 +558,17 @@ function editar(tipo, id) {
     });
 
     if (!item) return;
-const mapaIds = {
-    autores: 'autor-id',
-    categorias: 'categoria-id',
-    livros: 'livro-id',
-    utilizadores: 'utilizador-id',
-    avaliacoes: 'avaliacao-id',
-    emprestimos: 'emprestimo-id',
-    reservas: 'reserva-id'
-};
-const idInput = document.getElementById(mapaIds[tipo]);
-if (idInput) idInput.value = id; 
+    const mapaIds = {
+        autores: 'autor-id',
+        categorias: 'categoria-id',
+        livros: 'livro-id',
+        utilizadores: 'utilizador-id',
+        avaliacoes: 'avaliacao-id',
+        emprestimos: 'emprestimo-id',
+        reservas: 'reserva-id'
+    };
+    const idInput = document.getElementById(mapaIds[tipo]);
+    if (idInput) idInput.value = id;
 
     const form = document.getElementById(`form-${tipo}`);
 
@@ -528,8 +593,8 @@ if (idInput) idInput.value = id;
         }
     });
 
-const btn = form.querySelector('button[type="submit"], button');
-if (btn) btn.textContent = 'Alterar';
+    const btn = form.querySelector('button[type="submit"], button');
+    if (btn) btn.textContent = 'Alterar';
     form.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -651,6 +716,81 @@ async function fazerLogin() {
     }
 }
 
+function criarConta() {
+    // Pega os valores dos campos
+    const nome = document.getElementById('criar-nome').value.trim();
+    const email = document.getElementById('criar-email').value.trim();
+    const senha = document.getElementById('criar-senha').value;
+
+    // Pega o tipo selecionado (aluno ou professor)
+    const tipoSelecionado = document.querySelector('input[name="tipo-utilizador"]:checked');
+
+    // Validações básicas
+    if (!nome) {
+        alert('Por favor, insira o seu nome.');
+        return;
+    }
+
+    if (!email) {
+        alert('Por favor, insira o seu email.');
+        return;
+    }
+
+    if (!senha) {
+        alert('Por favor, insira uma senha.');
+        return;
+    }
+
+    if (senha.length < 6) {
+        alert('A senha deve ter pelo menos 6 caracteres.');
+        return;
+    }
+
+    if (!tipoSelecionado) {
+        alert('Por favor, selecione se você é Aluno ou Professor.');
+        return;
+    }
+
+    const tipo = tipoSelecionado.value; // "aluno" ou "professor"
+
+    // Envia para o backend
+    fetch('http://localhost:3000/api/registro', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nome_utilizador: nome,
+            email: email,
+            senha: senha,
+            tipo: tipo
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na rede: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.sucesso) {
+                alert('✅ Conta criada com sucesso! Agora pode fazer login.');
+                // Limpa o formulário
+                document.querySelector('#sign-section form').reset();
+                // Desmarca os radios (para limpar a seleção visual)
+                document.querySelectorAll('input[name="tipo-utilizador"]').forEach(r => r.checked = false);
+                // Volta para a tela de login
+                abrirSecao('login-section');
+            } else {
+                alert('❌ Erro: ' + (data.mensagem || 'Não foi possível criar a conta.'));
+            }
+        })
+        .catch(err => {
+            console.error('Erro ao criar conta:', err);
+            alert('❌ Erro de conexão com o servidor. Verifique se o backend está rodando.');
+        });
+}
+
 
 function atualizarMenuPorTipo() {
     document.querySelectorAll('nav .nav-btn').forEach(btn => {
@@ -670,7 +810,7 @@ function atualizarMenuPorTipo() {
 
         if (!userLogado) {
             // Usuário convidado: só vê inicio, livros e avaliacoes
-            if (['inicio', 'livros', 'avaliacoes'].includes(section)) {
+            if (['inicio', 'livros'].includes(section)) {
                 btn.style.display = 'inline-block';
             } else {
                 btn.style.display = 'none';
@@ -683,7 +823,7 @@ function atualizarMenuPorTipo() {
             btn.style.display = 'inline-block'; // admin vê tudo
         } else {
             // usuário comum
-            if (['inicio', 'livros', 'emprestimos', 'avaliacoes'].includes(section)) {
+            if (['inicio', 'livros', 'emprestimos', 'reservas'].includes(section)) {
                 btn.style.display = 'inline-block';
             } else {
                 btn.style.display = 'none';

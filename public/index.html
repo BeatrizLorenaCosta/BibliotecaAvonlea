@@ -22,21 +22,19 @@
 <body>
     <header>
         <div class="container header-inner">
-
             <h1>Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span></h1>
-            <!-- <button id="menu-toggle" aria-label="Alternar menu">☰</button>-->
             <nav aria-label="Seções da biblioteca" class="nav">
                 <button class="nav-btn" data-section="inicio" title="Página inicial">🏠 Início</button>
                 <button class="nav-btn" data-section="livros">Livros</button>
                 <button class="nav-btn" data-section="autores">Autores</button>
                 <button class="nav-btn" data-section="categorias">Categorias</button>
+                <button class="nav-btn" data-section="avaliacoes">Avaliações</button>
                 <button class="nav-btn" data-section="utilizadores">Utilizadores</button>
                 <button class="nav-btn" data-section="emprestimos">Empréstimos</button>
-                <!-- <button class="nav-btn" data-section="avaliacoes">Avaliações</button> -->
+                <button class="nav-btn" data-section="reservas">Reservas</button>
                 <button title="Login" id="login" class="nav-btn login-btn" data-section="login-section"></button>
-                <button id="logout-btn" class="submit-btn" onclick="sairLogin()" >Sair</button>
+                <button id="logout-btn" class="submit-btn" onclick="sairLogin()">Sair</button>
             </nav>
-
         </div>
     </header>
 
@@ -46,91 +44,50 @@
         <section id="inicio" class="section visible">
             <h2>Bem-vindo à Biblioteca De <span>𝒜𝓋𝑜𝓃𝓁𝑒𝒶</span> 🌿</h2>
             <p>Aqui, cada livro é uma porta; cada autor, um universo à espera de ser explorado. Entre, respire o aroma das páginas e descubra o poder das histórias que esperam por si.</p>
-    
-            <!-- <h3>O que podes fazer aqui:</h3>
-            <ul>
-                <li>📚 Explorar os livros — veja títulos, autores, categorias e anos de publicação. Cada detalhe é um fio que te liga à história.</li>
-                <li>✍️ Adicionar ou editar <strong>autores</strong> e <strong>categorias</strong> para manter a biblioteca organizada.</li>
-                <li>👥 Gerir <strong>utilizadores</strong> e verificar quantos livros cada um tem emprestados.</li>
-                <li>📖 Registar <strong>empréstimos</strong> e controlar quais livros ainda não foram devolvidos.</li>
-                <li>⭐ Avaliar livros e ler comentários para ajudar outros leitores a escolher suas próximas leituras.
-                </li>
-            </ul>
-            
-            <h3>Dicas para navegar:</h3>
-            <ul>
-                <li>Use os botões do menu no topo para aceder rapidamente a cada secção da biblioteca.</li>
-                <li>Clique em <strong>Editar</strong> ou <strong>Excluir</strong> para gerir registos diretamente nas tabelas (consoante as permissões do seu tipo de utilizador).</li>
-                <li>Preencha todos os campos obrigatórios nos formulários para evitar erros.</li>
-                <li>Os livros com disponibilidade <strong>Não</strong> estão atualmente emprestados.</li>
-            </ul>
-            
-            <h3>Estatísticas rápidas:</h3>
-            <ul>
-                <li>📖 Total de livros: <span id="total-livros">0</span></li>
-                <li>👥 Total de utilizadores: <span id="total-utilizadores">0</span></li>
-                <li>📝 Total de avaliações registadas: <span id="total-avaliacoes">0</span></li>
-            </ul>
-            
-            <p>Comece explorando a biblioteca e descubra o seu próximo livro favorito! 🔎</p> -->
         </section>
 
         <!-- INFO LIVRO -->
-<section id="infoLivro" class="section hidden" data-section="infoLivro">
-    <div class="InformacaoLivro">
-        
-        <!-- CAPA À ESQUERDA -->
-        <div class="capaLivro"></div>
-
-        <!-- TABELA PEQUENA À DIREITA DA CAPA -->
-        <div class="dadosLivro">
-            <table class="tabelaVertical" id="tabela-dadosLivro">
-                <tr><th>Título:</th>     <td></td></tr>
-                <tr><th>Autor:</th>      <td></td></tr>
-                <tr><th>Categoria:</th>  <td></td></tr>
-                <tr><th>Ano:</th>        <td></td></tr>
-                <tr><th>Disponível:</th> <td></td></tr>
-            </table>
-        </div>
-
-        <div class="soliLivro">
-            <button id="soliLivro" data-livro-id="${item.id_livro}">Solicitar Livro</button>
-        </div>
-
-        <p id="reservas-mensagem" style="color: red; display: none;"></p>
-
-        <dialog id="meu-popup" class="popup" style="display: none;">
-            <h2>Livro indisponível</h2>
-            <p>Este livro não está disponível. Deseja reservar?</p>
-            <div class="dentroPopUp">
-                <button class="nav-btn" id="confirmar-reserva">Sim</button>
-                <button class="nav-btn" id="cancelar-reserva">Não</button>
+        <section id="infoLivro" class="section hidden" data-section="infoLivro">
+            <div class="InformacaoLivro">
+                <div class="capaLivro"></div>
+                <div class="dadosLivro">
+                    <table class="tabelaVertical" id="tabela-dadosLivro">
+                        <tr><th>Título:</th>     <td></td></tr>
+                        <tr><th>Autor:</th>      <td></td></tr>
+                        <tr><th>Categoria:</th>  <td></td></tr>
+                        <tr><th>Ano:</th>        <td></td></tr>
+                        <tr><th>Disponível:</th> <td></td></tr>
+                    </table>
+                </div>
+                <div class="soliLivro">
+                    <button id="soliLivro" data-livro-id="${item.id_livro}">Solicitar Livro</button>
+                </div>
+                <p id="reservas-mensagem" style="color: rgb(30, 157, 5); display: none;">Livro reservado</p>
+                <dialog id="meu-popup" class="popup" style="display: none;">
+                    <h2>Livro indisponível</h2>
+                    <p>Este livro não está disponível. Deseja reservar?</p>
+                    <div class="dentroPopUp">
+                        <button class="nav-btn" id="confirmar-reserva">Sim</button>
+                        <button class="nav-btn" id="cancelar-reserva">Não</button>
+                    </div>
+                </dialog>
+                <div class="mediaAvaliacao">
+                    <span id="mediaAvaliacao">0.0</span>
+                    <span id="estrelasAvaliacao"></span>
+                </div>
             </div>
-        </dialog>
-
-
-
-        <!-- MÉDIA CIRCULAR NO CANTO INFERIOR DIREITO -->
-        <div class="mediaAvaliacao">
-            <span id="mediaAvaliacao">0.0</span>
-            <span id="estrelasAvaliacao"></span>
-        </div>
-    </div>
-
-    <!-- TABELA DE AVALIAÇÕES ABAIXO -->
-    <table id="tabela-avaliacao">
-        <thead>
-            <tr>
-                <th>Utilizador</th>
-                <th>Comentário</th>
-                <th>Classificação</th>
-                <th><button id="addAvaliacao">+</button></th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-</section>
-
+            <table id="tabela-avaliacao">
+                <thead>
+                    <tr>
+                        <th>Utilizador</th>
+                        <th>Comentário</th>
+                        <th>Classificação</th>
+                        <th><button id="addAvaliacao">+</button></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
 
         <!-- Seção para Livros -->
         <section id="livros" class="section">
@@ -142,29 +99,12 @@
                 <label>Autor: <select id="livro-autor_id" required></select></label>
                 <label>Categoria: <select id="livro-categoria_id" required></select></label>
                 <label>Ano: <input type="number" id="livro-ano" required></label>
-                <label>Disponível: <input type="checkbox" id="livro-disponivel"></label>
+                <div class="livroDisponivel"><label>Disponível:<input type="checkbox" id="livro-disponivel"></label></div>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('livros')">Adicionar/Atualizar</button>
             </form>
 
-             <table id="tabela-livros">
-                <thead>
-                    <tr>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <div class="pesquisa">
-                    <i class="fas fa-search search-icon"></i>
-                    <input idtype="text" placeholder="Pesquise um livro ou autor">
-                    </div>
-                    <br><br>
-                </tbody>
-            </table>
-
-
-            <!-- <table id="tabela-livros">
+            <!-- Tabela Admin (visão completa) -->
+            <table id="tabela-livros">
                 <thead>
                     <tr>
                         <th>Título</th>
@@ -176,11 +116,27 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
+                <tbody>
+                    <div class="pesquisa">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="Pesquise um livro ou autor">
+                    </div>
+                    <br><br>
+                </tbody>
+            </table>
+
+            <table id="tabela-livros-user" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Ano</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
                 <tbody></tbody>
-            </table> -->
+            </table>
         </section>
-
-
 
         <!-- Seção para Autores -->
         <section id="autores" class="section hidden">
@@ -188,12 +144,13 @@
             <p id="autores-mensagem" style="color: red; display: none;"></p>
             <form id="form-autores" onsubmit="return false;">
                 <input type="hidden" id="autor-id">
-                <input type="hidden" id="autores-id_autor">
                 <label>Nome: <input type="text" id="autor-nome" required></label>
                 <label>Nacionalidade: <input type="text" id="autor-nacionalidade"></label>
                 <label>Data Nascimento: <input type="date" id="autor-data_nascimento"></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('autores')">Adicionar/Atualizar</button>
             </form>
+
+            <!-- Tabela Admin -->
             <table id="tabela-autores">
                 <thead>
                     <tr>
@@ -217,6 +174,8 @@
                 <label>Descrição: <input type="text" id="categoria-descricao"></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('categorias')">Adicionar/Atualizar</button>
             </form>
+
+            <!-- Tabela Admin -->
             <table id="tabela-categorias">
                 <thead>
                     <tr>
@@ -244,6 +203,8 @@
                     </select></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('utilizadores')">Adicionar/Atualizar</button>
             </form>
+
+            <!-- Tabela Admin -->
             <table id="tabela-utilizadores">
                 <thead>
                     <tr>
@@ -259,7 +220,7 @@
             </table>
         </section>
 
-        <!-- Seção para Empréstimos (Extra) -->
+        <!-- Seção para Empréstimos -->
         <section id="emprestimos" class="section hidden">
             <h2 class="nomeSection">Empréstimos</h2>
             <p id="emprestimos-mensagem" style="color: red; display: none;"></p>
@@ -271,49 +232,72 @@
                 <label>Data Devolução: <input type="date" id="emprestimo-data_devolucao"></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
             </form>
-            <!-- <table id="tabela-emprestimos">
+
+            <!-- Tabela admin -->
+            <table id="tabela-emprestimos">
                 <thead>
-                    <tr>
+                    <tr><th>Utilizador</th>
                         <th>Livro</th>
-                        <th>Utilizador</th>
                         <th>Data Empréstimo</th>
                         <th>Data Devolução</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
-            </table> -->
+            </table>
 
-            <table id="tabela-emprestimos">
+            <!-- tabela do user (vê apenas os seus empréstimos) -->
+            <table id="tabela-emprestimos" style="display: none;">
                 <thead>
                     <tr>
                         <th>Livro</th>
+                        <th>Autor</th>
                         <th>Data Devolução</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
+        </section>
 
-            <h2>Reservas</h2>
+        
+        <!-- Seção para reservas -->
+        <section id="reservas" class="section hidden">
+            <h2 class="nomeSection">Reservas</h2>
+
+            <!-- Tabela Admin de Reservas -->
             <table id="tabela-reservas">
-        <thead>
-        <tr>
-            <th>Livro</th>
-            <th>Autor</th>
-            <th>Data da Reserva</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-        </thead>
-        <tbody id="reservas-body">
-            <!-- As linhas serão preenchidas pela função carregarReservas -->
-        </tbody>
-</table>
+                <thead>
+                    <tr>
+                        <th>Utilizador</th>
+                        <th>Livro</th>
+                        <th>Autor</th>
+                        <th>Data da Reserva</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="reservas-body"></tbody>
+            </table>
+
+            <!-- Tabela user de Reservas -->
+            <table id="tabela-reservas" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Livro</th>
+                        <th>Autor</th>
+                        <th>Data da Reserva</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="reservas-body"></tbody>
+            </table>
 
         </section>
 
-        <!-- Seção para Avaliações (Extra) -->
+        <!-- Seção para Avaliações -->
         <section id="avaliacoes" class="section hidden">
             <h2 class="nomeSection">Avaliações</h2>
             <p id="avaliacoes-mensagem" style="color: red; display: none;"></p>
@@ -322,30 +306,25 @@
                 <label>Livro: <select id="avaliacao-livro_id" required></select></label>
                 <label>Utilizador: <select id="avaliacao-utilizador_id" required></select></label>
                 <label>Comentário: <textarea id="avaliacao-comentario"></textarea></label>
-                <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5"
-                        required></label>
+                <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5" required></label>
                 <button class="submit-btn" onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
             </form>
+
+            <!-- Tabela Admin -->
             <table id="tabela-avaliacoes">
                 <thead>
                     <tr>
                         <th>Livro</th>
-                        <th>Autor</th>
-                        <th>Ano</th>
-                        <th>Media das classificações</th>
-
-                        <!-- <th>Livro</th>
-                        <th>Utilizador</th>
+                        <th>Utilizado</th>
                         <th>Comentário</th>
-                        <th>Classificação</th>
-                        <th>Ações</th> -->
+                        <th>Media das classificações</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </section>
 
-        
         <!-- Seção de Login -->
         <section id="login-section" class="section">
             <h2 class="nomeSection">Iniciar Sessão</h2>
@@ -353,15 +332,61 @@
                 <label>Email:
                     <input type="email" id="login-email" placeholder="Insira o seu email" required>
                 </label>
-                <label>Senha:
+                <label>Password:
                     <input type="password" id="login-senha" placeholder="Insira a sua senha" required>
                 </label>
-                <button  class="submit-btn" onclick="fazerLogin()">Entrar</button>
+                <button class="submit-btn" onclick="fazerLogin()">Entrar</button>
+                <p data-section="sign-section" class="redirect">Não tem uma conta?</p>
             </form>
-            <p id="login-erro" style="color: rgb(206, 222, 32); display: none;">Credenciais inválidas. Tente novamente.</p>
+            <p id="login-erro" style="color: rgb(222, 32, 32); display: none;">Credenciais inválidas. Tente novamente.</p>
         </section>
+
+         <section id="sign-section" class="section">
+            <h2 class="nomeSection">Criar Conta</h2>
+            <form id="form-login" onsubmit="return false;">
+                <label>Nome:
+                    <input type="text" id="criar-nome" placeholder="Insira o seu email" required>
+                </label>
+                <label>Email:
+                    <input type="email" id="criar-email" placeholder="Insira o seu email" required>
+                </label>
+                <label>Password:
+                    <input type="password" id="criar-senha" placeholder="Insira a sua password" required>
+                </label>
+                <div class="tipo-utilizador">
+                    <p class="label-tipo">Você é?</p>
+                    <div class="opcoes-tipo-imagem">
+                        
+                        <!-- Opção Aluno -->
+                        <label class="card-tipo">
+                            <input type="radio" name="tipo-utilizador" value="aluno" required>
+                            <div class="card-content">
+                                <img src="https://www.svgrepo.com/show/352635/user-graduate.svg" alt="Aluno">
+                                <span>Aluno</span>
+                            </div>
+                        </label>
+
+                        <!-- Opção Professor -->
+                        <label class="card-tipo">
+                            <input type="radio" name="tipo-utilizador" value="professor" required>
+                            <div class="card-content">
+                                <img src="https://cdn-icons-png.flaticon.com/512/90/90477.png" alt="Professor">
+                                <span>Professor</span>
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="criarConta()">Criar Conta</button>
+                <p data-section="login-section" class="redirect">Já tem uma conta?</p>
+            </form>
+        </section>
+
     </main>
 
+    <footer>
+        &copy; 2025 Biblioteca de Avonlea. Todos os direitos reservados.
+    </footer>
 </body>
 
 </html>

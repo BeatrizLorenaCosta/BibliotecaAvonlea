@@ -11,6 +11,7 @@ let dados = {
 
 
 let userLogado = null;
+let idEmEdicao = null;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -403,7 +404,7 @@ function gerarLinha(tipo, item) {
 
 // Função para mostrar mensagens na página
 function mostrarMensagem(tipo, texto, sucesso = true) {
-    const p = document.getElementById(`${tipo} -mensagem`);
+const p = document.getElementById(`${tipo}-mensagem`);
     p.textContent = texto;
     p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'} `;
     p.style.display = 'block';
@@ -415,64 +416,123 @@ function mostrarMensagem(tipo, texto, sucesso = true) {
 
 // Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
-    const form = document.getElementById(`form - ${tipo} `);
-    const dados = {};
+    const form = document.getElementById(`form-${tipo}`);
+const idInput = form.querySelector('input[type="hidden"]');
+const idExistente = idInput && idInput.value ? idInput.value : null;
+
+    const dadosParaEnviar = {};
     let todosPreenchidos = true;
 
     form.querySelectorAll('input, select, textarea').forEach(el => {
-        const campo = el.id.split('-')[1];
+        if (el === idInput) return;
+
+        const sufixo = el.id.split('-')[1];
+
+        let chaveAPI = sufixo;
+        if (tipo === 'autores' && sufixo === 'nome') chaveAPI = 'nome_autor';
+        if (tipo === 'categorias' && sufixo === 'nome') chaveAPI = 'nome_categoria';
+        if (tipo === 'utilizadores' && sufixo === 'nome') chaveAPI = 'nome_utilizador';
 
         if (el.type === 'checkbox') {
-            dados[campo] = el.checked;
+            dadosParaEnviar[chaveAPI] = el.checked ? 1 : 0;
         } else {
-            dados[campo] = el.value.trim(); // remove espaços em branco
-            // verifica se o campo obrigatório está vazio
-            if (el.hasAttribute('required') && dados[campo] === '') {
+            const valor = el.value.trim();
+            dadosParaEnviar[chaveAPI] = valor;
+            if (el.hasAttribute('required') && valor === '') {
                 todosPreenchidos = false;
             }
         }
     });
 
     if (!todosPreenchidos) {
-        mostrarMensagem(tipo, "❌ Preencha todos os campos!", false);
-        return; // não envia para o servidor
+        mostrarMensagem(tipo, "❌ Preencha todos os campos obrigatórios!", false);
+        return;
     }
 
-    fetch(`http://localhost:3000/api/${tipo}`, {
-        method: 'POST',
+    const metodo = idExistente ? 'PUT' : 'POST';
+    const url = idExistente
+        ? `http://localhost:3000/api/${tipo}/${idExistente}`
+        : `http://localhost:3000/api/${tipo}`;
+
+    fetch(url, {
+        method: metodo,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
+        body: JSON.stringify(dadosParaEnviar)
     })
-        .then(res => res.json())
-        .then(data => {
-            if (data.erro) {
-                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
-            } else {
-                mostrarMensagem(tipo, "✅ " + (data.mensagem || "Ação realizada com sucesso!"), true);
-                form.reset();
-                carregarDados(tipo);
-            }
-        })
-        .catch(err => mostrarMensagem(tipo, "❌ Erro de conexão com o servidor.", false));
+    .then(res => res.json())
+    .then(data => {
+        if (data.erro) {
+            mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+        } else {
+            mostrarMensagem(
+                tipo,
+                idExistente ? "✅ Atualizado com sucesso!" : "✅ Guardado com sucesso!",
+                true
+            );
+
+            form.reset();
+            if (idInput) idInput.value = '';
+const btn = form.querySelector('button[type="submit"], button');
+if (btn) btn.textContent = 'Adicionar';
+
+            carregarDados(tipo);
+        }
+    })
+    .catch(() => {
+        mostrarMensagem(tipo, "❌ Erro de ligação ao servidor.", false);
+    });
 }
+
+let autorEmEdicao = null;
 
 // Editar
 function editar(tipo, id) {
-    fetch(`http://localhost:3000/api/${tipo}`)
-        .then(res => res.json())
-        .then(dados => {
-            const item = dados.find(el => el.id === id);
-            const form = document.getElementById(`form-${tipo}`);
-            form.querySelectorAll('input, select, textarea').forEach(el => {
-                const campo = el.id.split('-')[1];
-                if (el.type === 'checkbox') {
-                    el.checked = item[campo];
-                } else {
-                    el.value = item[campo];
-                }
-            });
-        });
+    const item = dados[tipo].find(el => {
+        const chaveId = Object.keys(el).find(k => k.startsWith('id_'));
+        return el[chaveId] == id;
+    });
+
+    if (!item) return;
+const mapaIds = {
+    autores: 'autor-id',
+    categorias: 'categoria-id',
+    livros: 'livro-id',
+    utilizadores: 'utilizador-id',
+    avaliacoes: 'avaliacao-id',
+    emprestimos: 'emprestimo-id',
+    reservas: 'reserva-id'
+};
+const idInput = document.getElementById(mapaIds[tipo]);
+if (idInput) idInput.value = id; 
+
+    const form = document.getElementById(`form-${tipo}`);
+
+    form.querySelectorAll('input, select, textarea').forEach(el => {
+        const sufixo = el.id.split('-')[1];
+
+        let chaveBD = sufixo;
+        if (tipo === 'autores' && sufixo === 'nome') chaveBD = 'nome_autor';
+        if (tipo === 'categorias' && sufixo === 'nome') chaveBD = 'nome_categoria';
+        if (tipo === 'utilizadores' && sufixo === 'nome') chaveBD = 'nome_utilizador';
+
+        const valor = item[chaveBD];
+
+        if (valor !== undefined) {
+            if (el.type === 'date') {
+                el.value = new Date(valor).toISOString().split('T')[0];
+            } else if (el.type === 'checkbox') {
+                el.checked = !!valor;
+            } else {
+                el.value = valor;
+            }
+        }
+    });
+
+const btn = form.querySelector('button[type="submit"], button');
+if (btn) btn.textContent = 'Alterar';
+    form.scrollIntoView({ behavior: 'smooth' });
 }
+
 
 // Deletar
 function deletar(tipo, id) {
@@ -529,29 +589,23 @@ function ordenarTabela(tipo, indice, th) {
 
 // Função para atualizar as estatísticas rápidas
 function atualizarEstatisticas() {
-    // Total de livros
-    fetch('http://localhost:3000/api/livros')
-        .then(res => res.json())
-        .then(livros => {
-            document.getElementById('total-livros').textContent = livros.length;
-        })
-        .catch(err => console.error('Erro ao buscar livros:', err));
+    const metas = [
+        { id: 'total-livros', endpoint: 'livros' },
+        { id: 'total-utilizadores', endpoint: 'utilizadores' },
+        { id: 'total-avaliacoes', endpoint: 'avaliacoes' }
+    ];
 
-    // Total de utilizadores
-    fetch('http://localhost:3000/api/utilizadores')
-        .then(res => res.json())
-        .then(utilizadores => {
-            document.getElementById('total-utilizadores').textContent = utilizadores.length;
-        })
-        .catch(err => console.error('Erro ao buscar utilizadores:', err));
-
-    // Total de avaliações
-    fetch('http://localhost:3000/api/avaliacoes')
-        .then(res => res.json())
-        .then(avaliacoes => {
-            document.getElementById('total-avaliacoes').textContent = avaliacoes.length;
-        })
-        .catch(err => console.error('Erro ao buscar avaliações:', err));
+    metas.forEach(meta => {
+        const elemento = document.getElementById(meta.id);
+        if (elemento) {
+            fetch(`http://localhost:3000/api/${meta.endpoint}`)
+                .then(res => res.json())
+                .then(lista => {
+                    elemento.textContent = lista.length;
+                })
+                .catch(err => console.warn(`Erro ao atualizar ${meta.id}:`, err));
+        }
+    });
 }
 
 

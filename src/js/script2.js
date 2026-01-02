@@ -530,26 +530,20 @@ function gerarLinha(tipo, item, isAdmin = false) { // isAdmin agora é parâmetr
 }
 
 // Função para mostrar mensagens na página
-function mostrarMensagem(tipo, texto, sucesso) {
-    const msg = document.getElementById(`mensagem-${tipo}`);
+function mostrarMensagem(tipo, texto, sucesso = true) {
+    const p = document.getElementById(`${tipo} -mensagem`);
+    p.textContent = texto;
+    p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'} `;
+    p.style.display = 'block';
 
-    if (!msg) {
-        console.error(`Elemento mensagem-${tipo} não encontrado`);
-        return;
-    }
-
-    msg.textContent = texto;
-    msg.className = sucesso ? 'mensagem sucesso' : 'mensagem erro';
-    msg.style.display = 'block';
+    setTimeout(() => {
+        p.style.display = 'none';
+    }, 4000);
 }
-
-
 
 // Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
-    const form = document.getElementById(`form-${tipo}`);
-    if (!form) return;
-
+    const form = document.getElementById(`form - ${tipo} `);
     const idInput = form.querySelector('input[type="hidden"]');
     const idExistente = idInput && idInput.value ? idInput.value : null;
 
@@ -560,7 +554,6 @@ function adicionarOuAtualizar(tipo) {
         if (el === idInput) return;
 
         const sufixo = el.id.split('-')[1];
-        if (!sufixo) return;
 
         let chaveAPI = sufixo;
         if (tipo === 'autores' && sufixo === 'nome') chaveAPI = 'nome_autor';
@@ -572,7 +565,6 @@ function adicionarOuAtualizar(tipo) {
         } else {
             const valor = el.value.trim();
             dadosParaEnviar[chaveAPI] = valor;
-
             if (el.hasAttribute('required') && valor === '') {
                 todosPreenchidos = false;
             }
@@ -597,11 +589,7 @@ function adicionarOuAtualizar(tipo) {
         .then(res => res.json())
         .then(data => {
             if (data.erro) {
-                mostrarMensagem(
-                    tipo,
-                    "❌ Erro: " + (data.erro.sqlMessage || data.erro),
-                    false
-                );
+                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
             } else {
                 mostrarMensagem(
                     tipo,
@@ -611,7 +599,6 @@ function adicionarOuAtualizar(tipo) {
 
                 form.reset();
                 if (idInput) idInput.value = '';
-
                 const btn = form.querySelector('button[type="submit"], button');
                 if (btn) btn.textContent = 'Adicionar';
 
@@ -912,29 +899,36 @@ function atualizarPermissoesFormulario() {
     const forms = document.querySelectorAll('form');
 
     forms.forEach(form => {
-        // Usuário não logado: esconde todos os forms de edição, mostra apenas login
-        if (!userLogado) {
-            if (form.id === 'form-login') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-        } else {
-            // Usuário logado
-            if (userLogado.tipo.toLowerCase() === 'admin') {
-                form.style.display = 'block'; // admin vê todos os forms
-            } else {
-                // usuário normal não admin
-                if (['form-avaliacoes'].includes(form.id)) {
-                    form.style.display = 'block';
-                } else {
-                    form.style.display = 'none';
-                }
-            }
+        const formId = form.id;
+
+        // Sempre mostra o form de login (para logout ou troca de conta)
+        if (formId === 'form-login') {
+            form.style.display = 'block';
+            return;
         }
+
+        // Se não está logado → esconde tudo exceto login
+        if (!userLogado) {
+            form.style.display = 'none';
+            return;
+        }
+
+        // Se é admin → vê tudo
+        if (userLogado.tipo.toLowerCase() === 'admin') {
+            form.style.display = 'block';
+            return;
+        }
+
+        // Utilizador comum logado → vê apenas estes formulários
+        const formsPermitidos = [            // o form normal de avaliação (se existir)
+            'form-avaliacao-popup',      // ← o form do popup que criámos
+            // Adiciona outros se precisares no futuro, ex:
+            // 'form-reserva-popup',
+        ];
+
+        form.style.display = formsPermitidos.includes(formId) ? 'block' : 'none';
     });
 }
-
 function sairLogin() {
     userLogado = null;
     alert('Sessão encerrada.');
@@ -1048,34 +1042,143 @@ function preencherMediaEAvaliacoes(idLivro) {
 }
 
 function preencherAvaliacoesLivro(idLivro) {
-
     const tbody = document.querySelector('#infoLivro #tabela-avaliacao tbody');
+    if (!tbody) return;
+
     tbody.innerHTML = ''; // Limpa
 
-    // 🎯 Filtra avaliações pelo ID do livro
     const avaliacoesLivro = dados.avaliacoes.filter(av => av.livro_id === idLivro);
 
     if (avaliacoesLivro.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#888;">📝 Nenhuma avaliação ainda</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">📝 Nenhuma avaliação ainda. Seja o primeiro!</td></tr>';
         return;
     }
 
-    // 🎯 Preenche com os dados
+    // Separa a avaliação do utilizador logado (se existir)
+    let avaliacaoDoUser = null;
+    const avaliacoesOutros = [];
+
     avaliacoesLivro.forEach(av => {
-        tbody.innerHTML += `
-            <tr>
-                <td>${av.nome_utilizador || 'Anónimo'}</td>
-                <td>${av.comentario || '-'}</td>
-                <td>${gerarEstrelas(av.classificacao)}</td>
-            </tr>
+        if (userLogado && av.utilizador_id === userLogado.id_utilizador) {
+            avaliacaoDoUser = av;
+        } else {
+            avaliacoesOutros.push(av);
+        }
+    });
+
+    const criarLinhaAvaliacao = (av, ehDoUserLogado = false) => {
+        const tr = document.createElement('tr');
+
+        if (ehDoUserLogado) {
+            tr.style.backgroundColor = '#f0f8ff'; // fundo azulzinho suave
+            tr.style.borderLeft = '4px solid #457b9d'; // barra lateral para destacar
+        }
+
+        tr.innerHTML = `
+            <td>
+                <strong>${ehDoUserLogado ? 'Você' : (av.nome_utilizador || 'Anónimo')}</strong>
+            </td>
+            <td>${av.comentario || '-'}</td>
+            <td>${gerarEstrelas(av.classificacao)}</td>
+            <td>
+                ${ehDoUserLogado ? `
+                    <button class="edit" onclick="editarAvaliacao(${av.id_avaliacao})" title="Editar">Editar</button>
+                    <button class="delete" onclick="deletarAvaliacao(${av.id_avaliacao}, ${idLivro})" title="Apagar">Deleta</button>
+                ` : ''}
+            </td>
         `;
+        return tr;
+    };
+
+    // 1. Avaliação do utilizador logado vem primeiro
+    if (avaliacaoDoUser) {
+        tbody.appendChild(criarLinhaAvaliacao(avaliacaoDoUser, true));
+    }
+
+    // 2. Avaliações dos outros
+    avaliacoesOutros.forEach(av => {
+        tbody.appendChild(criarLinhaAvaliacao(av, false));
     });
 }
 
+let livroAtualId = null; // guarda o ID do livro atual
+
+// Quando abre detalhes do livro
 async function abrirSecaoComCapa(secaoId, idLivro) {
-    abrirSecao(secaoId); // Mostra a seção
-    await preencherDadosLivro(idLivro); // Atualiza capa e tabela
-    preencherAvaliacoesLivro(idLivro); // Atualiza avaliações
+    abrirSecao(secaoId);
+    await preencherDadosLivro(idLivro);
+    preencherAvaliacoesLivro(idLivro);
+
+    livroAtualId = idLivro; // guarda para usar no popup
+}
+
+// Abre o popup
+function abrirPopupAvaliacao() {
+    if (!userLogado) {
+        abrirSecao('login-section');
+        return;
+    }
+
+    const popup = document.getElementById('popup-avaliacao');
+    const tituloInput = document.getElementById('popup-livro-titulo');
+
+    // Preenche o livro atual
+    const livro = dados.livros.find(l => l.id_livro === livroAtualId);
+    if (livro) {
+        tituloInput.value = livro.titulo;
+        document.getElementById('popup-livro-id').value = livroAtualId;
+    }
+
+    // Limpa campos
+    document.getElementById('popup-comentario').value = '';
+    document.getElementById('popup-classificacao').value = 5;
+
+    popup.style.display = 'block'; // abre com display
+}
+
+// Fecha o popup
+function fecharPopupAvaliacao() {
+    document.getElementById('popup-avaliacao').style.display = 'none';
+}
+
+// Salva a avaliação
+function salvarAvaliacao() {
+    const livroId = document.getElementById('popup-livro-id').value;
+    const comentario = document.getElementById('popup-comentario').value.trim();
+    const classificacao = Number(document.getElementById('popup-classificacao').value);
+
+    if (!comentario) {
+        alert('Por favor, escreva um comentário.');
+        return;
+    }
+
+    if (classificacao < 1 || classificacao > 5) {
+        alert('Classificação deve ser entre 1 e 5.');
+        return;
+    }
+
+    fetch('http://localhost:3000/api/avaliacoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            livro_id: livroId,
+            utilizador_id: userLogado.id_utilizador,
+            comentario: comentario,
+            classificacao: classificacao
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                alert('Erro: ' + (data.erro.sqlMessage || data.erro));
+            } else {
+                alert('✅ Avaliação enviada com sucesso!');
+                fecharPopupAvaliacao();
+                preencherAvaliacoesLivro(livroAtualId);
+                preencherMediaEAvaliacoes(livroAtualId);
+            }
+        })
+        .catch(err => alert('Erro de conexão.'));
 }
 
 function solicitarLivro(idLivro) {
@@ -1167,40 +1270,76 @@ function emprestarLivroComoAdmin(idLivro, idUtilizador, idReserva) {
             alert('❌ Erro de conexão com o servidor.');
         });
 }
+function editarAvaliacao(idAvaliacao) {
+    const avaliacao = dados.avaliacoes.find(av => av.id_avaliacao === idAvaliacao);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const inputPesquisa = document.getElementById('pesquisa-livros');
-
-    if (inputPesquisa) {
-        inputPesquisa.addEventListener('input', () => {
-            filtrarLivros(inputPesquisa.value);
-        });
+    if (!avaliacao || (userLogado && avaliacao.utilizador_id !== userLogado.id_utilizador)) {
+        alert('Você só pode editar a sua própria avaliação.');
+        return;
     }
-});
 
-function filtrarLivros(texto) {
-    texto = texto.toLowerCase();
+    // Abre o popup preenchido com os dados atuais
+    abrirPopupAvaliacao();
 
-    const livrosFiltrados = dados.livros.filter(livro =>
-        livro.titulo.toLowerCase().includes(texto) ||
-        livro.nome_autor.toLowerCase().includes(texto)
-    );
+    const popup = document.getElementById('popup-avaliacao');
+    document.getElementById('popup-comentario').value = avaliacao.comentario;
+    document.getElementById('popup-classificacao').value = avaliacao.classificacao;
 
-    preencherTabela('livros', livrosFiltrados);
+    // Muda o botão para "Atualizar" e guarda o ID da avaliação
+    const btnSalvar = document.getElementById('btn-salvar-avaliacao');
+    btnSalvar.textContent = 'Atualizar Avaliação';
+    btnSalvar.onclick = () => atualizarAvaliacao(idAvaliacao);
 }
 
+function atualizarAvaliacao(idAvaliacao) {
+    const comentario = document.getElementById('popup-comentario').value.trim();
+    const classificacao = Number(document.getElementById('popup-classificacao').value);
 
-document.addEventListener('DOMContentLoaded', () => {
-document.getElementById('pesquisa-autores')?.addEventListener('input', e => {
-    const texto = e.target.value.toLowerCase();
+    if (!comentario) {
+        alert('O comentário não pode ficar vazio.');
+        return;
+    }
 
-    const autoresFiltrados = dados.autores.filter(autor =>
-        autor.nome_autor.toLowerCase().includes(texto)
-    );
+    fetch(`http://localhost:3000/api/avaliacoes/${idAvaliacao}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            comentario: comentario,
+            classificacao: classificacao
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                alert('Erro ao atualizar: ' + data.erro);
+            } else {
+                alert('✅ Avaliação atualizada com sucesso!');
+                fecharPopupAvaliacao();
+                // Atualiza tudo
+                const livroId = document.getElementById('popup-livro-id').value;
+                preencherAvaliacoesLivro(Number(livroId));
+                preencherMediaEAvaliacoes(Number(livroId));
+            }
+        });
+}
 
-    preencherTabela('autores', autoresFiltrados);
-});
+function deletarAvaliacao(idAvaliacao, idLivro) {
+    if (!confirm('Tem certeza que quer apagar a sua avaliação?')) return;
 
-});
+    fetch(`http://localhost:3000/api/avaliacoes/${idAvaliacao}`, {
+        method: 'DELETE'
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                alert('Erro ao apagar: ' + data.erro);
+            } else {
+                alert('🗑️ Avaliação apagada.');
+                preencherAvaliacoesLivro(idLivro);
+                preencherMediaEAvaliacoes(idLivro);
+            }
+        });
+}
+
 
 

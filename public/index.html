@@ -76,17 +76,49 @@
                     <span id="estrelasAvaliacao"></span>
                 </div>
             </div>
+            <!-- Dentro da seção infoLivro, onde está a tabela de avaliações -->
             <table id="tabela-avaliacao">
                 <thead>
                     <tr>
                         <th>Utilizador</th>
                         <th>Comentário</th>
                         <th>Classificação</th>
-                        <th><button id="addAvaliacao">+</button></th>
+                        <th>
+                            <button class="addAvaliacao" onclick="abrirPopupAvaliacao()" title="Adicionar avaliação">
+                                +
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
+            <!-- Popup como DIV normal (não trava nunca) -->
+        <div id="popup-avaliacao" class="modal-avaliacao" style="display: none;">
+            <div class="modal-content">
+                <h2>Adicionar Avaliação</h2>
+                <form id="form-avaliacao-popup" onsubmit="return false;">
+                    <input type="hidden" id="popup-livro-id">
+                    
+                    <label>Livro: 
+                        <input type="text" id="popup-livro-titulo" disabled>
+                    </label>
+                    
+                    <label>Comentário:
+                        <textarea id="popup-comentario" required placeholder="Escreva a sua opinião..."></textarea>
+                    </label>
+                    
+                    <label>Classificação (1-5):
+                        <input type="number" id="popup-classificacao" min="1" max="5" required value="5">
+                    </label>
+                    
+                    <div class="botoes-modal">
+                        <button type="button" class="delete" onclick="fecharPopupAvaliacao()">Cancelar</button>
+                        <button type="button" class="edit" onclick="salvarAvaliacao()" class="submit-btn">Enviar Avaliação</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+            
         </section>
 
         <!-- Seção para Livros -->
@@ -308,14 +340,6 @@
         <section id="avaliacoes" class="section hidden">
             <h2 class="nomeSection">Avaliações</h2>
             <p id="avaliacoes-mensagem" style="color: red; display: none;"></p>
-            <form id="form-avaliacoes" onsubmit="return false;">
-                <input type="hidden" id="avaliacao-id">
-                <label>Livro: <select id="avaliacao-livro_id" required></select></label>
-                <label>Utilizador: <select id="avaliacao-utilizador_id" required></select></label>
-                <label>Comentário: <textarea id="avaliacao-comentario"></textarea></label>
-                <label>Classificação: <input type="number" id="avaliacao-classificacao" min="1" max="5" required></label>
-                <button class="submit-btn" onclick="adicionarOuAtualizar('avaliacoes')">Adicionar/Atualizar</button>
-            </form>
 
             <!-- Tabela Admin -->
             <table id="tabela-avaliacoes">

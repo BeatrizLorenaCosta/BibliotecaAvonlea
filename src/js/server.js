@@ -176,15 +176,55 @@ app.post('/api/utilizadores', (req, res) => {
     );
 });
 
-// Atualizar um utilizador
 app.put('/api/utilizadores/:id', (req, res) => {
-    const { nome_utilizador, email, senha, id_conta } = req.body;
-    db.query('UPDATE utilizadores SET nome_utilizador=?, email=?, senha=?, id_conta=? WHERE id_utilizador=?',
-        [nome_utilizador, email, senha, id_conta, req.params.id],
-        err => err ? res.status(500).json({ erro: err }) : res.json({ mensagem: 'Utilizador atualizado' })
-    );
-});
+    const { nome_utilizador, email, senha, tipo } = req.body;
 
+    // Monta a query dinamicamente
+    let campos = [];
+    let valores = [];
+
+    if (tipo !== undefined) {
+        // Busca id_conta pelo tipo
+        db.query('SELECT id_conta FROM contas WHERE tipo = ?', [tipo], (err, results) => {
+            if (err) return res.status(500).json({ erro: err });
+            if (results.length === 0) return res.status(400).json({ erro: 'Tipo inválido' });
+
+            const id_conta = results[0].id_conta;
+            campos.push('id_conta = ?');
+            valores.push(id_conta);
+
+            if (nome_utilizador !== undefined) {
+                campos.push('nome_utilizador = ?');
+                valores.push(nome_utilizador);
+            }
+
+            if (email !== undefined) {
+                campos.push('email = ?');
+                valores.push(email);
+            }
+
+            if (senha !== undefined && senha !== '') {
+                campos.push('senha = ?');
+                valores.push(senha);
+            }
+
+            if (campos.length === 0) {
+                return res.json({ mensagem: 'Nenhum campo para atualizar' });
+            }
+
+            valores.push(req.params.id); // para o WHERE
+
+            const sql = `UPDATE utilizadores SET ${campos.join(', ')} WHERE id_utilizador = ?`;
+
+            db.query(sql, valores, err => {
+                if (err) return res.status(500).json({ erro: err });
+                res.json({ mensagem: 'Utilizador atualizado com sucesso' });
+            });
+        });
+    } else {
+        return res.status(400).json({ erro: 'O campo tipo é obrigatório' });
+    }
+});
 // Deletar um utilizador
 app.delete('/api/utilizadores/:id', (req, res) => {
     db.query('DELETE FROM utilizadores WHERE id_utilizador=?', [req.params.id],

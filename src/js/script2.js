@@ -531,7 +531,7 @@ function gerarLinha(tipo, item, isAdmin = false) { // isAdmin agora é parâmetr
 
 // Função para mostrar mensagens na página
 function mostrarMensagem(tipo, texto, sucesso = true) {
-    const p = document.getElementById(`${tipo} -mensagem`);
+    const p = document.getElementById(`${tipo}-mensagem`);  // ← CORRIGIDO: sem espaço
     p.textContent = texto;
     p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'} `;
     p.style.display = 'block';
@@ -541,38 +541,45 @@ function mostrarMensagem(tipo, texto, sucesso = true) {
     }, 4000);
 }
 
-// Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
-    const form = document.getElementById(`form - ${tipo} `);
+    const form = document.getElementById(`form-${tipo}`);
+    if (!form) {
+        console.error(`Formulário form-${tipo} não encontrado`);
+        return;
+    }
+
     const idInput = form.querySelector('input[type="hidden"]');
     const idExistente = idInput && idInput.value ? idInput.value : null;
 
     const dadosParaEnviar = {};
-    let todosPreenchidos = true;
 
     form.querySelectorAll('input, select, textarea').forEach(el => {
         if (el === idInput) return;
+        if (el.disabled) return; // ignora selects desabilitados
 
         const sufixo = el.id.split('-')[1];
-
         let chaveAPI = sufixo;
+
+        // Mapeamento correto
         if (tipo === 'autores' && sufixo === 'nome') chaveAPI = 'nome_autor';
         if (tipo === 'categorias' && sufixo === 'nome') chaveAPI = 'nome_categoria';
         if (tipo === 'utilizadores' && sufixo === 'nome') chaveAPI = 'nome_utilizador';
 
+        let valor;
         if (el.type === 'checkbox') {
-            dadosParaEnviar[chaveAPI] = el.checked ? 1 : 0;
+            valor = el.checked ? 1 : 0;
         } else {
-            const valor = el.value.trim();
+            valor = el.value.trim();
+        }
+
+        // Só envia se tiver valor (evita enviar senha vazia ou campos nulos)
+        if (valor !== '' && valor !== null && valor !== undefined) {
             dadosParaEnviar[chaveAPI] = valor;
-            if (el.hasAttribute('required') && valor === '') {
-                todosPreenchidos = false;
-            }
         }
     });
 
-    if (!todosPreenchidos) {
-        mostrarMensagem(tipo, "❌ Preencha todos os campos obrigatórios!", false);
+    if (Object.keys(dadosParaEnviar).length === 0 && idExistente) {
+        alert('Nenhum campo foi alterado.');
         return;
     }
 
@@ -589,24 +596,21 @@ function adicionarOuAtualizar(tipo) {
         .then(res => res.json())
         .then(data => {
             if (data.erro) {
-                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+                alert('❌ Erro: ' + (data.erro.sqlMessage || data.erro));
             } else {
-                mostrarMensagem(
-                    tipo,
-                    idExistente ? "✅ Atualizado com sucesso!" : "✅ Guardado com sucesso!",
-                    true
-                );
+                alert(idExistente ? '✅ Utilizador atualizado com sucesso!' : '✅ Utilizador adicionado com sucesso!');
 
                 form.reset();
                 if (idInput) idInput.value = '';
-                const btn = form.querySelector('button[type="submit"], button');
+                const btn = form.querySelector('.submit-btn');
                 if (btn) btn.textContent = 'Adicionar';
 
                 carregarDados(tipo);
             }
         })
-        .catch(() => {
-            mostrarMensagem(tipo, "❌ Erro de ligação ao servidor.", false);
+        .catch(err => {
+            console.error(err);
+            alert('Erro de conexão com o servidor.');
         });
 }
 

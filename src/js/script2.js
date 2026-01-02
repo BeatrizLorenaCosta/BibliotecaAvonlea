@@ -1155,6 +1155,39 @@ function emprestarLivroComoAdmin(idLivro, idUtilizador, idReserva) {
         });
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const inputPesquisa = document.getElementById('pesquisa-livros');
 
+    if (inputPesquisa) {
+        inputPesquisa.addEventListener('input', () => {
+            filtrarLivros(inputPesquisa.value);
+        });
+    }
+});
+
+function filtrarLivros(texto) {
+    texto = texto.toLowerCase();
+
+    const livrosFiltrados = dados.livros.filter(livro =>
+        livro.titulo.toLowerCase().includes(texto) ||
+        livro.nome_autor.toLowerCase().includes(texto)
+    );
+
+    preencherTabela('livros', livrosFiltrados);
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+document.getElementById('pesquisa-autores')?.addEventListener('input', e => {
+    const texto = e.target.value.toLowerCase();
+
+    const autoresFiltrados = dados.autores.filter(autor =>
+        autor.nome_autor.toLowerCase().includes(texto)
+    );
+
+    preencherTabela('autores', autoresFiltrados);
+});
+
+});
 
 

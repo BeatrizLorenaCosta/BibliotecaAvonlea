@@ -118,9 +118,14 @@
                 </thead>
                 <tbody>
                     <div class="pesquisa">
-                        <i class="fas fa-search search-icon"></i>
-                        <input type="text" placeholder="Pesquise um livro ou autor">
-                    </div>
+    <i class="fas fa-search search-icon"></i>
+    <input 
+        type="text" 
+        id="pesquisa-livros" 
+        placeholder="Pesquisar por título ou autor..."
+    >
+</div>
+
                     <br><br>
                 </tbody>
             </table>
@@ -142,6 +147,8 @@
         <section id="autores" class="section hidden">
             <h2>Autores</h2>
             <p id="autores-mensagem" style="color: red; display: none;"></p>
+            <input type="text" id="pesquisa-autores" placeholder="Pesquisar autor...">
+
             <form id="form-autores" onsubmit="return false;">
                 <input type="hidden" id="autor-id">
                 <label>Nome: <input type="text" id="autor-nome" required></label>

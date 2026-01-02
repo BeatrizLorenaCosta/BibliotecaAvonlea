@@ -530,20 +530,26 @@ function gerarLinha(tipo, item, isAdmin = false) { // isAdmin agora é parâmetr
 }
 
 // Função para mostrar mensagens na página
-function mostrarMensagem(tipo, texto, sucesso = true) {
-    const p = document.getElementById(`${tipo} -mensagem`);
-    p.textContent = texto;
-    p.className = `mensagem ${sucesso ? 'sucesso' : 'erro'} `;
-    p.style.display = 'block';
+function mostrarMensagem(tipo, texto, sucesso) {
+    const msg = document.getElementById(`mensagem-${tipo}`);
 
-    setTimeout(() => {
-        p.style.display = 'none';
-    }, 4000);
+    if (!msg) {
+        console.error(`Elemento mensagem-${tipo} não encontrado`);
+        return;
+    }
+
+    msg.textContent = texto;
+    msg.className = sucesso ? 'mensagem sucesso' : 'mensagem erro';
+    msg.style.display = 'block';
 }
+
+
 
 // Adicionar ou atualizar
 function adicionarOuAtualizar(tipo) {
-    const form = document.getElementById(`form - ${tipo} `);
+    const form = document.getElementById(`form-${tipo}`);
+    if (!form) return;
+
     const idInput = form.querySelector('input[type="hidden"]');
     const idExistente = idInput && idInput.value ? idInput.value : null;
 
@@ -554,6 +560,7 @@ function adicionarOuAtualizar(tipo) {
         if (el === idInput) return;
 
         const sufixo = el.id.split('-')[1];
+        if (!sufixo) return;
 
         let chaveAPI = sufixo;
         if (tipo === 'autores' && sufixo === 'nome') chaveAPI = 'nome_autor';
@@ -565,6 +572,7 @@ function adicionarOuAtualizar(tipo) {
         } else {
             const valor = el.value.trim();
             dadosParaEnviar[chaveAPI] = valor;
+
             if (el.hasAttribute('required') && valor === '') {
                 todosPreenchidos = false;
             }
@@ -589,7 +597,11 @@ function adicionarOuAtualizar(tipo) {
         .then(res => res.json())
         .then(data => {
             if (data.erro) {
-                mostrarMensagem(tipo, "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+                mostrarMensagem(
+                    tipo,
+                    "❌ Erro: " + (data.erro.sqlMessage || data.erro),
+                    false
+                );
             } else {
                 mostrarMensagem(
                     tipo,
@@ -599,6 +611,7 @@ function adicionarOuAtualizar(tipo) {
 
                 form.reset();
                 if (idInput) idInput.value = '';
+
                 const btn = form.querySelector('button[type="submit"], button');
                 if (btn) btn.textContent = 'Adicionar';
 

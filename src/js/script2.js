@@ -108,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =======================
     // atualizarEstatisticas();
 
-    // atualizarMenuPorTipo();
-    // atualizarPermissoesFormulario();
+    atualizarMenuPorTipo();
+    atualizarPermissoesFormulario();
 
     // =======================
     // BOTÃO SOLICITAR LIVRO
@@ -205,7 +205,7 @@ async function carregarDados(tipo) {
             switch (tipo) {
                 case 'emprestimos':
                     // só os empréstimos do próprio user
-                    dadosAPI = dadosAPI.filter(e => e.id_utilizador === userLogado.id_utilizador);
+                    dadosAPI = dadosAPI.filter(e => e.utilizador_id === userLogado.id_utilizador);
                     break;
                 case 'avaliacoes':
                     // avaliacoes do user sobre os livros que leu + todas as dos outros em todos os livros
@@ -283,51 +283,81 @@ function preencherSelect(selectId, dadosArray, idCampo, nomeCampo, textoDefault 
     });
 }
 
-// Função genérica para preencher tabelas
 function preencherTabela(tipo, dadosArray) {
-    if (tipo !== 'livros') {
-        // Para outras tabelas, mantém o comportamento antigo
-        const tbody = document.querySelector(`#tabela-${tipo} tbody`);
-        if (!tbody) return;
-        tbody.innerHTML = '';
+    const isAdmin = userLogado && userLogado.tipo.toLowerCase() === 'admin';
+
+    // ==================== LIVROS (o teu código original, intocado) ====================
+    if (tipo === 'livros') {
+        const tabelaAdmin = document.getElementById('tabela-livros');
+        const tabelaUser = document.getElementById('tabela-livros-user');
+
+        const tbodyAdmin = tabelaAdmin.querySelector('tbody');
+        const tbodyUser = tabelaUser ? tabelaUser.querySelector('tbody') : null;
+
+        // Mostra a tabela correta
+        tabelaAdmin.style.display = isAdmin ? 'table' : 'none';
+        if (tabelaUser) tabelaUser.style.display = isAdmin ? 'none' : 'table';
+
+        // Limpa
+        tbodyAdmin.innerHTML = '';
+        if (tbodyUser) tbodyUser.innerHTML = '';
+
+        // Preenche a correta
+        const tbodyCorreto = isAdmin ? tbodyAdmin : tbodyUser;
+
+        dadosArray.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = gerarLinha(tipo, item, isAdmin);
+            tbodyCorreto.appendChild(tr);
+        });
+
+        // Capas só para user comum
+        if (!isAdmin && tabelaUser) {
+            atualizarCapasLivros(dadosArray);
+        }
+
+        return; // sai aqui, não vai para baixo
+    }
+
+    // ==================== EMPRÉSTIMOS E RESERVAS (novo, separado) ====================
+    if (tipo === 'emprestimos' || tipo === 'reservas') {
+        let tabelaAdminId = tipo === 'emprestimos' ? 'tabela-emprestimos-admin' : 'tabela-reservas-admin';
+        let tabelaUserId = tipo === 'emprestimos' ? 'tabela-emprestimos-user' : 'tabela-reservas-user';
+
+        const tabelaAdmin = document.getElementById(tabelaAdminId);
+        const tabelaUser = document.getElementById(tabelaUserId);
+
+        if (!tabelaAdmin) return;
+
+        const tbodyAdmin = tabelaAdmin.querySelector('tbody');
+        const tbodyUser = tabelaUser ? tabelaUser.querySelector('tbody') : null;
+
+        tabelaAdmin.style.display = isAdmin ? 'table' : 'none';
+        if (tabelaUser) tabelaUser.style.display = isAdmin ? 'none' : 'table';
+
+        tbodyAdmin.innerHTML = '';
+        if (tbodyUser) tbodyUser.innerHTML = '';
+
+        const tbodyCorreto = isAdmin ? tbodyAdmin : tbodyUser;
+
         dadosArray.forEach(item => {
             const tr = document.createElement('tr');
             tr.innerHTML = gerarLinha(tipo, item);
-            tbody.appendChild(tr);
+            tbodyCorreto.appendChild(tr);
         });
+
         return;
     }
 
-    // ====== ESPECIAL PARA LIVROS ======
-    const isAdmin = userLogado && userLogado.tipo.toLowerCase() === 'admin';
-
-    const tabelaAdmin = document.getElementById('tabela-livros');
-    const tabelaUser = document.getElementById('tabela-livros-user');
-
-    const tbodyAdmin = tabelaAdmin.querySelector('tbody');
-    const tbodyUser = tabelaUser ? tabelaUser.querySelector('tbody') : null;
-
-    // Decide qual tabela mostrar
-    tabelaAdmin.style.display = isAdmin ? 'table' : 'none';
-    if (tabelaUser) tabelaUser.style.display = isAdmin ? 'none' : 'table';
-
-    // Limpa as duas (por segurança)
-    tbodyAdmin.innerHTML = '';
-    if (tbodyUser) tbodyUser.innerHTML = '';
-
-    // Preenche a tabela correta
-    const tbodyCorreto = isAdmin ? tbodyAdmin : tbodyUser;
-
+    // ==================== TODAS AS OUTRAS TABELAS ====================
+    const tbody = document.querySelector(`#tabela-${tipo} tbody`);
+    if (!tbody) return;
+    tbody.innerHTML = '';
     dadosArray.forEach(item => {
         const tr = document.createElement('tr');
-        tr.innerHTML = gerarLinha(tipo, item, isAdmin); // passa isAdmin como parâmetro
-        tbodyCorreto.appendChild(tr);
+        tr.innerHTML = gerarLinha(tipo, item);
+        tbody.appendChild(tr);
     });
-
-    // Só carrega capas para usuário comum
-    if (!isAdmin && tabelaUser) {
-        atualizarCapasLivros(dadosArray);
-    }
 }
 
 // Função para gerar estrelas, suporta meia estrela
@@ -399,37 +429,69 @@ function gerarLinha(tipo, item, isAdmin = false) { // isAdmin agora é parâmetr
             </td>
 `,
         emprestimos: () => {
+            const isAdmin = userLogado && userLogado.tipo.toLowerCase() === 'admin';
+
             if (isAdmin) {
-                return ` 
-                <td>${item.nome_utilizador}</td>
-                <td> ${item.titulo || 'Desconhecido'}</td >
-                <td> ${item.data_emprestimo ? new Date(item.data_emprestimo).toLocaleDateString('pt-PT') : 'Desconhecido'}</td>
-                <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
-                <td>${item.status || 'Desconhecido'}</td>
-                <td class="actions">
+                return `
+            <td>${item.nome_utilizador || 'Desconhecido'}</td>
+            <td>${item.titulo || 'Desconhecido'}</td>
+            <td>${item.data_emprestimo ? new Date(item.data_emprestimo).toLocaleDateString('pt-PT') : '-'}</td>
+            <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
+            <td>${item.status || 'Emprestado'}</td>
+            <td class="actions">
                 <button class="edit" onclick="editar('emprestimos', ${item.id_emprestimo})">Editar</button>
                 <button class="delete" onclick="deletar('emprestimos', ${item.id_emprestimo})">Excluir</button>
             </td>
-`;
+        `;
             } else {
-                return ` 
-                <td> ${item.titulo || 'Desconhecido'}</td >
-                <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
-                <td>${item.status || 'Desconhecido'}</td>
-`;
+                return `
+            <td>${item.titulo || 'Desconhecido'}</td>
+            <td>${item.data_devolucao ? new Date(item.data_devolucao).toLocaleDateString('pt-PT') : 'Não devolvido'}</td>
+            <td>${item.status || 'Emprestado'}</td>
+        `;
             }
-
         },
 
-        reservas: () => `
-            <td> ${item.livro || 'Desconhecido'}</td >
+        reservas: () => {
+            const isAdmin = userLogado && userLogado.tipo.toLowerCase() === 'admin';
+
+            if (isAdmin) {
+                // Usa valores com fallback seguro para evitar undefined/null
+                const livroId = item.livro_id || item.id_livro || 0;
+                const utilizadorId = item.utilizador_id || 0;
+                const reservaId = item.id_reserva || 0;
+
+                return `
+            <td>${item.utilizador || item.nome_utilizador || 'Desconhecido'}</td>
+            <td>${item.livro || item.titulo || 'Desconhecido'}</td>
             <td>${item.autor || 'Desconhecido'}</td>
             <td>${new Date(item.data_reserva).toLocaleDateString('pt-PT')}</td>
             <td>${item.status || 'Pendente'}</td>
             <td class="actions">
-                <button class="delete" onclick="deletar('reservas', ${item.id_reserva})">Cancelar</button>
+                <button class="edit" onclick="emprestarLivroComoAdmin(${livroId}, ${utilizadorId}, ${reservaId})">
+                    Emprestar
+                </button>
+                <button class="delete" onclick="deletar('reservas', ${reservaId})">
+                    Cancelar
+                </button>
             </td>
-`,
+        `;
+            } else {
+                // user comum
+                const reservaId = item.id_reserva || 0;
+                return `
+            <td>${item.livro || item.titulo || 'Desconhecido'}</td>
+            <td>${item.autor || 'Desconhecido'}</td>
+            <td>${new Date(item.data_reserva).toLocaleDateString('pt-PT')}</td>
+            <td>${item.status || 'Pendente'}</td>
+            <td class="actions">
+                <button class="delete" onclick="deletar('reservas', ${reservaId})">
+                    Cancelar
+                </button>
+            </td>
+        `;
+            }
+        },
         avaliacoes: () => {
             return `
     <td> ${item.titulo || 'Desconhecido'}
@@ -1021,26 +1083,25 @@ function solicitarLivro(idLivro) {
 
     // 2️⃣ Livro disponível → faz empréstimo automático
     if (livro.disponivel === 1 || livro.disponivel === true) {
-        fetch('http://localhost:3000/api/emprestimos', {
+        fetch('http://localhost:3000/api/reservas', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 livro_id: idLivro,
-                utilizador_id: userLogado.id_utilizador,
-                data_emprestimo: new Date().toISOString().slice(0, 10)
+                utilizador_id: userLogado.id_utilizador
             })
         })
             .then(res => res.json())
             .then(data => {
                 if (data.erro) {
-                    mostrarMensagem('emprestimos', "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
+                    mostrarMensagem('reservas', "❌ Erro: " + (data.erro.sqlMessage || data.erro), false);
                 } else {
-                    mostrarMensagem('emprestimos', '✅ Empréstimo realizado!', true);
-                    carregarDados('emprestimos');
+                    alert("Livro reservado dirija se ao balcão para buscar");
+                    carregarDados('reservas');
                     carregarDados('livros');
                 }
             })
-            .catch(err => mostrarMensagem('emprestimos', "❌ Erro de conexão com o servidor.", false));
+            .catch(err => mostrarMensagem('reservas', "Erro de conexão com o servidor.", false));
         return;
     }
 
@@ -1048,6 +1109,50 @@ function solicitarLivro(idLivro) {
     const popup = document.getElementById('meu-popup');
     popup.dataset.livroId = idLivro;
     popup.style.display = 'block'; // Exibe o popup
+
+}
+
+function emprestarLivroComoAdmin(idLivro, idUtilizador, idReserva) {
+    if (!confirm('Confirmar empréstimo deste livro para este utilizador?')) {
+        return;
+    }
+
+    fetch('http://localhost:3000/api/emprestimos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            livro_id: idLivro,
+            utilizador_id: idUtilizador,
+            data_emprestimo: new Date().toISOString().slice(0, 10)
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.erro) {
+                alert('❌ Erro ao realizar empréstimo: ' + (data.erro.sqlMessage || data.erro));
+            } else {
+                alert('✅ Empréstimo realizado com sucesso!\nO aluno pode ir buscar o livro.');
+
+                // Atualiza tabelas
+                carregarDados('emprestimos');
+                carregarDados('livros');
+
+                // === IMPORTANTE: Deleta a reserva após o empréstimo ===
+                if (idReserva) {
+                    fetch(`http://localhost:3000/api/reservas/${idReserva}`, {
+                        method: 'DELETE'
+                    })
+                        .then(() => {
+                            carregarDados('reservas'); // atualiza a tabela de reservas
+                        })
+                        .catch(err => console.error('Erro ao deletar reserva:', err));
+                }
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('❌ Erro de conexão com o servidor.');
+        });
 }
 
 

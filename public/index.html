@@ -233,32 +233,32 @@
                 <button class="submit-btn" onclick="adicionarOuAtualizar('emprestimos')">Adicionar/Atualizar</button>
             </form>
 
-            <!-- Tabela admin -->
-            <table id="tabela-emprestimos">
-                <thead>
-                    <tr><th>Utilizador</th>
-                        <th>Livro</th>
-                        <th>Data Empréstimo</th>
-                        <th>Data Devolução</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <!-- Tabela para Admin -->
+                <table id="tabela-emprestimos-admin">
+                    <thead>
+                        <tr>
+                            <th>Utilizador</th>
+                            <th>Livro</th>
+                            <th>Data Empréstimo</th>
+                            <th>Data Devolução</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
 
-            <!-- tabela do user (vê apenas os seus empréstimos) -->
-            <table id="tabela-emprestimos" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Livro</th>
-                        <th>Autor</th>
-                        <th>Data Devolução</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+                <!-- Tabela para Utilizador comum -->
+                <table id="tabela-emprestimos-user" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Livro</th>
+                            <th>Data Devolução</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
         </section>
 
         
@@ -266,8 +266,8 @@
         <section id="reservas" class="section hidden">
             <h2 class="nomeSection">Reservas</h2>
 
-            <!-- Tabela Admin de Reservas -->
-            <table id="tabela-reservas">
+            <!-- Tabela para Admin (completa) -->
+            <table id="tabela-reservas-admin">
                 <thead>
                     <tr>
                         <th>Utilizador</th>
@@ -278,11 +278,11 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="reservas-body"></tbody>
+                <tbody></tbody>
             </table>
 
-            <!-- Tabela user de Reservas -->
-            <table id="tabela-reservas" style="display: none;">
+            <!-- Tabela para Utilizador comum (simplificada) -->
+            <table id="tabela-reservas-user" style="display: none;">
                 <thead>
                     <tr>
                         <th>Livro</th>
@@ -292,7 +292,7 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="reservas-body"></tbody>
+                <tbody></tbody>
             </table>
 
         </section>

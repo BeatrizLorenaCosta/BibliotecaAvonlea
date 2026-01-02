@@ -192,10 +192,12 @@ app.delete('/api/utilizadores/:id', (req, res) => {
     );
 });
 
+// ============ EMPRÉSTIMOS ============
 app.get('/api/emprestimos', (req, res) => {
     const sql = `
         SELECT
             e.id_emprestimo,
+            e.utilizador_id,      
             l.titulo,
             u.nome_utilizador,
             e.data_emprestimo,
@@ -325,11 +327,13 @@ app.delete('/api/avaliacoes/:id', (req, res) => {
     );
 });
 
-// Listar todas as reservas
+// ============ RESERVAS ============
 app.get('/api/reservas', (req, res) => {
     const sql = `
         SELECT
             r.id_reserva,
+            r.livro_id,        
+            r.utilizador_id,           
             l.titulo AS livro,
             a.nome_autor AS autor,
             u.nome_utilizador AS utilizador,
